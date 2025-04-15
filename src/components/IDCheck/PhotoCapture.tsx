@@ -1,8 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Button, Typography, CircularProgress } from '@mui/material';
+import { Box, Button, Typography, CircularProgress, RadioGroup, FormControlLabel, Radio, FormControl, IconButton, Slider } from '@mui/material';
 import { uploadFile } from '../../services/api';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import VideocamOffIcon from '@mui/icons-material/VideocamOff';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import ZoomOutIcon from '@mui/icons-material/ZoomOut';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 
 interface PhotoCaptureProps {
   onNext: () => void;
@@ -23,41 +30,59 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
+  const [photoVerificationState, setPhotoVerificationState] = useState<'initial' | 'verified' | 'rejected'>('initial');
+  const [qualityResponse, setQualityResponse] = useState<string>('');
+  const [showLiveView, setShowLiveView] = useState(false);
+  const [lastCapturedPhoto, setLastCapturedPhoto] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!capturedPhoto) {
-      startCamera();
-    }
-    return () => {
-      stopCamera();
-    };
-  }, [capturedPhoto]);
+    const initCamera = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
-  const startCamera = async () => {
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' },
-      });
-      setStream(mediaStream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error('La fotocamera non è supportata su questo browser');
+        }
+
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true
+        });
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+        }
+
+        setStream(mediaStream);
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Errore fotocamera:', err);
+        setError('Errore durante l\'inizializzazione della fotocamera');
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.error('Error accessing camera:', err);
-      setError('Impossibile accedere alla fotocamera. Verifica le autorizzazioni.');
-    }
-  };
+    };
 
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      setStream(null);
+    initCamera();
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
+  const handlePhotoQualityResponse = (isGood: boolean) => {
+    if (isGood) {
+      setPhotoVerificationState('verified');
+    } else {
+      setPhotoVerificationState('rejected');
     }
   };
 
   const handleNewPhoto = () => {
     setCapturedPhoto(null);
     setError(null);
+    setPhotoVerificationState('initial');
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,31 +124,35 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
   };
 
   const capturePhoto = async () => {
-    if (!videoRef.current) return;
+    if (!videoRef.current || !stream) {
+      setError('Fotocamera non disponibile. Riprova.');
+      return;
+    }
 
     try {
       setIsLoading(true);
       setError(null);
+      setPhotoVerificationState('initial');
+
       const canvas = document.createElement('canvas');
       canvas.width = videoRef.current.videoWidth;
       canvas.height = videoRef.current.videoHeight;
       const ctx = canvas.getContext('2d');
       
       if (!ctx) {
-        throw new Error('Impossibile ottenere il contesto del canvas');
+        throw new Error('Impossibile creare il contesto del canvas');
       }
 
       ctx.drawImage(videoRef.current, 0, 0);
-      const photoData = canvas.toDataURL('image/jpeg');
-      
-      // Convert base64 to blob for upload
-      const response = await fetch(photoData);
-      const blob = await response.blob();
-      const file = new File([blob], 'document.jpg', { type: 'image/jpeg' });
+      const photoData = canvas.toDataURL('image/jpeg', 0.9);
 
+      const file = new File([await (await fetch(photoData)).blob()], 'document.jpg', { type: 'image/jpeg' });
       await uploadFile(file, documentType);
+      
       setCapturedPhoto(photoData);
-      onPhotoCapture(photoData);
+      setLastCapturedPhoto(photoData);
+      setShowLiveView(false);
+      
     } catch (err) {
       console.error('Error capturing photo:', err);
       setError('Errore durante la cattura della foto. Riprova.');
@@ -132,109 +161,238 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
     }
   };
 
+  const handleQualityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setQualityResponse(value);
+    
+    if (value === 'no') {
+      setShowLiveView(true);
+      setPhotoVerificationState('initial');
+    } else {
+      setShowLiveView(false);
+      handlePhotoQualityResponse(true);
+    }
+  };
+
   return (
-    <Box>
+    <Box
+      sx={{
+        maxWidth: '600px',
+        margin: '0 auto'
+      }}
+    >
       <Box
         sx={{
           position: 'relative',
-          width: '100%',
-          height: '300px',
-          backgroundColor: '#f5f5f5',
-          borderRadius: 1,
-          overflow: 'hidden',
-          mb: 2,
+          width: '533px',
+          backgroundColor: '#fff',
+          borderRadius: 2,
+          overflow: 'visible',
+          display: 'flex',
+          flexDirection: 'column',
+          margin: '0 auto',
+          border: '1px solid #e0e0e0'
         }}
       >
-        {isLoading ? (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        ) : capturedPhoto ? (
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 2, 
+          p: 2,
+          borderBottom: '1px solid #e0e0e0'
+        }}>
           <img
-            src={capturedPhoto}
-            alt="Captured"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
+            src={`/icons/${
+              documentType === 'Carta d\'identità' ? 'IdCard' :
+              documentType === 'Passaporto' ? 'Passport' :
+              'DriverLicense'
+            }.png`}
+            alt={documentType}
+            style={{ width: 40, height: 40 }}
+          />
+          <Typography 
+            sx={{ 
+              fontSize: '1rem',
+              fontWeight: 500,
+              color: '#1a1a1a'
             }}
-          />
-        ) : stream ? (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        ) : (
-          <Box
-            sx={{
+          >
+            Foto fronte {documentType}
+          </Typography>
+        </Box>
+
+        <Box sx={{
+          width: '533px',
+          height: '300px',
+          position: 'relative',
+          backgroundColor: '#000',
+          overflow: 'hidden'
+        }}>
+          {isLoading ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+              <CircularProgress />
+            </Box>
+          ) : error ? (
+            <Box sx={{
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
               height: '100%',
-            }}
+              gap: 2,
+              color: 'error.main'
+            }}>
+              <VideocamOffIcon sx={{ fontSize: 48 }} />
+              <Typography variant="h6">
+                Fotocamera non disponibile
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Apri il coperchio o usa una webcam esterna
+              </Typography>
+            </Box>
+          ) : (
+            <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                style={{ 
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  display: 'block',
+                  visibility: showLiveView || !capturedPhoto ? 'visible' : 'hidden'
+                }}
+              />
+              {capturedPhoto && !showLiveView && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: '#000',
+                    zIndex: 1
+                  }}
+                >
+                  <img
+                    src={capturedPhoto}
+                    alt="Captured"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain'
+                    }}
+                  />
+                </Box>
+              )}
+            </Box>
+          )}
+        </Box>
+
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          p: 2,
+          width: '100%',
+          borderTop: '1px solid #e0e0e0'
+        }}>
+          <Button
+            variant="outlined"
+            onClick={onBack}
+            startIcon={<ArrowBackIcon />}
           >
-            <Typography>Camera non disponibile</Typography>
-          </Box>
-        )}
+            INDIETRO
+          </Button>
+
+          {(showLiveView || !capturedPhoto) && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={capturePhoto}
+              startIcon={<PhotoCameraIcon />}
+              disabled={!stream || isLoading}
+            >
+              {showLiveView ? 'SCATTA DI NUOVO' : 'SCATTA'}
+            </Button>
+          )}
+        </Box>
       </Box>
+
+      {capturedPhoto && (
+        <Box sx={{ 
+          mt: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: '100%',
+          gap: 1,
+          pb: 2
+        }}>
+          <Typography sx={{ 
+            fontSize: '0.9rem',
+            textAlign: 'center'
+          }}>
+            La foto è a fuoco? Riesci a leggere bene tutte le scritte?
+          </Typography>
+
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            justifyContent: 'center'
+          }}>
+            <FormControl>
+              <RadioGroup
+                row
+                value={qualityResponse}
+                onChange={handleQualityChange}
+                sx={{
+                  justifyContent: 'center',
+                  '& .MuiFormControlLabel-root': {
+                    mr: 3,
+                    mb: 0
+                  }
+                }}
+              >
+                <FormControlLabel 
+                  value="yes" 
+                  control={<Radio size="small" />} 
+                  label="Sì" 
+                />
+                <FormControlLabel 
+                  value="no" 
+                  control={<Radio size="small" />} 
+                  label="No" 
+                />
+              </RadioGroup>
+            </FormControl>
+
+            {photoVerificationState === 'verified' && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => onPhotoCapture(capturedPhoto)}
+                sx={{ 
+                  minWidth: 160,
+                  height: 32,
+                  fontSize: '0.9rem'
+                }}
+              >
+                Avanti
+              </Button>
+            )}
+          </Box>
+        </Box>
+      )}
 
       {error && (
         <Typography color="error" sx={{ mb: 2 }}>
           {error}
         </Typography>
       )}
-
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
-        <Button onClick={onBack}>
-          Indietro
-        </Button>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <input
-            type="file"
-            accept="image/*"
-            style={{ display: 'none' }}
-            ref={fileInputRef}
-            onChange={handleFileUpload}
-          />
-          {!capturedPhoto ? (
-            <>
-              <Button
-                variant="outlined"
-                onClick={() => fileInputRef.current?.click()}
-                startIcon={<FileUploadIcon />}
-                disabled={isLoading}
-              >
-                Carica foto
-              </Button>
-              <Button
-                variant="contained"
-                onClick={capturePhoto}
-                startIcon={<PhotoCameraIcon />}
-                disabled={isLoading || !stream}
-              >
-                Scatta foto
-              </Button>
-            </>
-          ) : (
-            <Button
-              variant="contained"
-              onClick={handleNewPhoto}
-              startIcon={<PhotoCameraIcon />}
-            >
-              Nuova foto
-            </Button>
-          )}
-        </Box>
-      </Box>
     </Box>
   );
 };
