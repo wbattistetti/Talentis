@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Box, Button, Typography, IconButton, Tooltip, Container, Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import { Box, Button, Typography, IconButton, Tooltip, Container, Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemIcon, ListItemText, Link, Paper, Grid } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import { IDCardForm } from './IDCardForm';
 import { PassportForm } from './PassportForm';
@@ -11,9 +11,16 @@ import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import PrivacyTipIcon from '@mui/icons-material/PrivacyTip';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import { VerificationDialog } from './VerificationDialog';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import PublicIcon from '@mui/icons-material/Public';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import { CreditCard as IdCardIcon, DriveEta as DriversLicenseIcon, Assignment as PassportIcon } from '@mui/icons-material';
 
 interface DocumentSelectionProps {
   onCancel: () => void;
+  translations: any;
+  onComplete: (data: DocumentsData) => void;
 }
 
 interface PersonalData {
@@ -36,7 +43,9 @@ type DocumentsData = {
   [key: string]: DocumentData;
 };
 
-export const DocumentSelection: React.FC<DocumentSelectionProps> = ({ onCancel }) => {
+type DocumentType = 'idCard' | 'passport' | 'driversLicense';
+
+export const DocumentSelection = ({ onCancel, translations, onComplete }: DocumentSelectionProps) => {
   const [selectedDocuments, setSelectedDocuments] = React.useState<string[]>([]);
   const [showForm, setShowForm] = React.useState(false);
   const [currentFormIndex, setCurrentFormIndex] = React.useState(0);
@@ -46,8 +55,18 @@ export const DocumentSelection: React.FC<DocumentSelectionProps> = ({ onCancel }
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(true);
   const [showProceedButton, setShowProceedButton] = React.useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
+  const [qualityResponse, setQualityResponse] = useState('');
+  const [showLiveView, setShowLiveView] = useState(true);
 
-  const handleDocumentSelect = (documentType: string) => {
+  console.log('DocumentSelection rendering with:', {
+    showWelcomeDialog,
+    showForm,
+    selectedDocuments,
+    translations: !!translations
+  });
+
+  const handleDocumentSelect = (documentType: DocumentType) => {
     setSelectedDocuments(prev => {
       if (prev.includes(documentType)) {
         return prev.filter(doc => doc !== documentType);
@@ -57,34 +76,42 @@ export const DocumentSelection: React.FC<DocumentSelectionProps> = ({ onCancel }
   };
 
   const handleNext = () => {
+    console.log('handleNext called with state:', {
+      showForm,
+      isCapturingPhoto,
+      isCapturingBack,
+      currentFormIndex,
+      selectedDocuments,
+      currentDoc: selectedDocuments[currentFormIndex]
+    });
+
     if (!showForm) {
+      // Primo step: mostra il form del primo documento
       setShowForm(true);
     } else if (!isCapturingPhoto) {
-      // Se siamo nel form, passa alla cattura foto
+      // Secondo step: inizia la cattura della foto frontale
       setIsCapturingPhoto(true);
-    } else if (!isCapturingBack && needsBackPhoto(selectedDocuments[currentFormIndex])) {
-      // Se stiamo catturando la foto frontale e il documento richiede il retro
-      setIsCapturingBack(true);
-    } else if (currentFormIndex < selectedDocuments.length - 1) {
-      // Passa al prossimo documento
-      setCurrentFormIndex(prev => prev + 1);
-      setIsCapturingPhoto(false);
       setIsCapturingBack(false);
+    } else if (!isCapturingBack && needsBackPhoto(selectedDocuments[currentFormIndex])) {
+      // Terzo step: se necessario, cattura il retro
+      setIsCapturingBack(true);
+    } else {
+      // Quarto step: passa al prossimo documento se disponibile
+      if (currentFormIndex < selectedDocuments.length - 1) {
+        setCurrentFormIndex(prev => prev + 1);
+        setIsCapturingPhoto(false);
+        setIsCapturingBack(false);
+        setShowForm(true);
+      } else {
+        // Processo completato, passa alla verifica biometrica
+        console.log('Processo documenti completato, dati:', documentsData);
+        onComplete(documentsData);
+      }
     }
   };
 
   const handleBack = () => {
-    if (isCapturingBack) {
-      setIsCapturingBack(false);
-    } else if (isCapturingPhoto) {
-      setIsCapturingPhoto(false);
-    } else if (currentFormIndex > 0) {
-      setCurrentFormIndex(prev => prev - 1);
-      setIsCapturingPhoto(false);
-      setIsCapturingBack(false);
-    } else {
-      setShowForm(false);
-    }
+    onCancel();
   };
 
   const handleDataChange = (data: Partial<PersonalData>) => {
@@ -103,36 +130,52 @@ export const DocumentSelection: React.FC<DocumentSelectionProps> = ({ onCancel }
 
   const handlePhotoCapture = (photoData: string) => {
     const currentDoc = selectedDocuments[currentFormIndex];
-    setDocumentsData(prev => ({
-      ...prev,
+    console.log('handlePhotoCapture called for document:', {
+      currentDoc,
+      isCapturingBack,
+      currentFormIndex
+    });
+
+    // Salva la foto nel documento corrente
+    const updatedDocumentsData = {
+      ...documentsData,
       [currentDoc]: {
-        ...prev[currentDoc],
+        ...documentsData[currentDoc],
         [isCapturingBack ? 'backPhoto' : 'frontPhoto']: photoData
       }
-    }));
-    handleNext();
+    };
+    setDocumentsData(updatedDocumentsData);
+
+    // Verifica se questa è l'ultima foto da catturare
+    const isLastDocument = currentFormIndex === selectedDocuments.length - 1;
+    const isLastPhoto = isCapturingBack || !needsBackPhoto(currentDoc);
+
+    if (isLastDocument && isLastPhoto) {
+      // Se questa è l'ultima foto dell'ultimo documento, completa il processo
+      console.log('Ultima foto catturata, completamento processo');
+      onComplete(updatedDocumentsData);
+    } else {
+      // Altrimenti procedi al prossimo step
+      handleNext();
+    }
   };
 
   const needsBackPhoto = (documentType: string) => {
-    return documentType === 'id' || documentType === 'driverLicense';
+    return documentType === 'idCard' || documentType === 'driversLicense';
   };
 
   const getNextButtonText = () => {
-    if (!showForm) return 'Avanti';
-    if (!isCapturingPhoto) return 'Scatta o carica foto';
-    if (!isCapturingBack && needsBackPhoto(selectedDocuments[currentFormIndex])) return 'Scatta retro';
-    if (currentFormIndex === selectedDocuments.length - 1) return 'Conferma';
-    return 'Avanti';
+    return translations.verification.buttons.next;
   };
 
   const getDocumentTitle = (documentType: string) => {
     switch (documentType) {
       case 'id':
-        return 'Carta d\'identità';
+        return translations.verification.documents.idCard;
       case 'passport':
-        return 'Passaporto';
+        return translations.verification.documents.passport;
       case 'driverLicense':
-        return 'Patente di guida';
+        return translations.verification.documents.driverLicense;
       default:
         return '';
     }
@@ -142,44 +185,54 @@ export const DocumentSelection: React.FC<DocumentSelectionProps> = ({ onCancel }
     const currentDoc = selectedDocuments[currentFormIndex];
     const currentData = documentsData[currentDoc];
 
+    console.log('getCurrentContent called with:', {
+      currentDoc,
+      currentData,
+      selectedDocuments,
+      currentFormIndex,
+      isCapturingPhoto,
+      isCapturingBack,
+      showForm
+    });
+
     if (isCapturingPhoto) {
       return (
         <Box>
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 2,
-            mb: 3 
-          }}>
-            <img
-              src={`/icons/${currentDoc === 'id' ? 'IdCard' : 
-                    currentDoc === 'passport' ? 'Passport' : 
-                    'DriverLicense'}.png`}
-              alt={getDocumentTitle(currentDoc)}
-              style={{ width: '50px', height: '50px' }}
-            />
-            <Typography variant="h6">
-              {isCapturingBack ? `Retro ${getDocumentTitle(currentDoc)}` : `Fronte ${getDocumentTitle(currentDoc)}`}
-            </Typography>
-          </Box>
           <PhotoCapture 
             onPhotoCapture={handlePhotoCapture}
             onNext={handleNext}
             onBack={handleBack}
-            documentType={getDocumentTitle(currentDoc)}
+            documentType={currentDoc}
+            isFront={!isCapturingBack}
           />
         </Box>
       );
     }
 
     switch (currentDoc) {
-      case 'id':
-        return <IDCardForm onDataChange={handleDataChange} personalData={currentData?.personalData} />;
+      case 'idCard':
+        return <IDCardForm 
+          onDataChange={handleDataChange}
+          personalData={currentData?.personalData}
+          onBack={() => setShowForm(false)}
+          onNext={() => setIsCapturingPhoto(true)}
+        />;
       case 'passport':
-        return <PassportForm onDataChange={handleDataChange} personalData={currentData?.personalData} />;
-      case 'driverLicense':
-        return <DriverLicenseForm onDataChange={handleDataChange} personalData={currentData?.personalData} />;
+        return <PassportForm 
+          onDataChange={handleDataChange} 
+          personalData={currentData?.personalData}
+          onBack={() => setShowForm(false)}
+          onNext={() => setIsCapturingPhoto(true)}
+        />;
+      case 'driversLicense':
+        return <DriverLicenseForm 
+          onDataChange={handleDataChange} 
+          personalData={currentData?.personalData}
+          onBack={() => setShowForm(false)}
+          onNext={() => setIsCapturingPhoto(true)}
+        />;
       default:
+        console.log('No matching document type found');
         return null;
     }
   };
@@ -202,260 +255,168 @@ export const DocumentSelection: React.FC<DocumentSelectionProps> = ({ onCancel }
     }
   }, []);
 
+  const documents = [
+    {
+      type: 'idCard' as DocumentType,
+      icon: <IdCardIcon sx={{ color: '#4CAF50', fontSize: 64 }} />,
+      title: translations?.documents?.idCard || 'Carta d\'identità',
+      description: 'Documento di identità nazionale'
+    },
+    {
+      type: 'passport' as DocumentType,
+      icon: <PassportIcon sx={{ color: '#2196F3', fontSize: 64 }} />,
+      title: translations?.documents?.passport || 'Passaporto',
+      description: 'Documento per viaggi internazionali'
+    },
+    {
+      type: 'driversLicense' as DocumentType,
+      icon: <DriversLicenseIcon sx={{ color: '#9C27B0', fontSize: 64 }} />,
+      title: translations?.documents?.driverLicense || 'Patente di guida',
+      description: 'Documento di guida e identità'
+    }
+  ];
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Dialog 
+      <VerificationDialog 
         open={showWelcomeDialog} 
-        onClose={() => {}}
-        maxWidth="md"
-        fullWidth
-        disableEscapeKeyDown
-        PaperProps={{
-          sx: {
-            maxHeight: '80vh',
-            borderRadius: 2,
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column'
-          }
+        onClose={() => {
+          console.log('Dialog closing');
+          setShowWelcomeDialog(false);
         }}
-      >
-        <DialogTitle sx={{ textAlign: 'center', pb: 1 }}>
-          <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
-            Verifica della tua identità con Talentis
-          </Typography>
-        </DialogTitle>
-        <DialogContent 
-          ref={contentRef}
-          sx={{ 
-            overflowY: 'auto',
-            px: 2,
-            pb: 4,
-            flex: 1,
-            '& .MuiListItem-root': {
-              py: 0.5,
-              '& .MuiListItemIcon-root': {
-                minWidth: 36
-              }
-            }
-          }}
-        >
-          <Typography variant="body2" paragraph sx={{ mb: 1 }}>
-            Per completare la registrazione, dobbiamo verificare la tua identità. Ti chiederemo:
-          </Typography>
-          
-          <List dense>
-            <ListItem>
-              <ListItemIcon>
-                <DescriptionIcon sx={{ fontSize: 24, color: '#4CAF50' }} />
-              </ListItemIcon>
-              <ListItemText 
-                primary="Di indicare i documenti che vuoi utilizzare (es. carta d'identità o passaporto)."
-                primaryTypographyProps={{ variant: 'body2' }}
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <CameraAltIcon sx={{ fontSize: 24, color: '#4CAF50' }} />
-              </ListItemIcon>
-              <ListItemText 
-                primary="Di scattare una foto del documento e un selfie (foto e video)."
-                primaryTypographyProps={{ variant: 'body2' }}
-              />
-            </ListItem>
-          </List>
+        translations={translations}
+      />
 
-          <Typography variant="subtitle2" sx={{ mt: 2, mb: 1, fontWeight: 'bold' }}>
-            Perché serve questa verifica?
-          </Typography>
-          
-          <List dense>
-            <ListItem>
-              <ListItemIcon>
-                <VerifiedUserIcon sx={{ fontSize: 24, color: '#2196F3' }} />
-              </ListItemIcon>
-              <ListItemText 
-                primary="Certifica che sei la persona indicata nel documento."
-                primaryTypographyProps={{ variant: 'body2' }}
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <VerifiedUserIcon sx={{ fontSize: 24, color: '#2196F3' }} />
-              </ListItemIcon>
-              <ListItemText 
-                primary="È una garanzia per i datori di lavoro e rende il tuo curriculum certificato, aumentando le tue opportunità."
-                primaryTypographyProps={{ variant: 'body2' }}
-              />
-            </ListItem>
-          </List>
-
-          <Typography variant="subtitle2" sx={{ mt: 2, mb: 1, fontWeight: 'bold' }}>
-            E la tua privacy?
-          </Typography>
-          
-          <List dense>
-            <ListItem>
-              <ListItemIcon>
-                <PrivacyTipIcon sx={{ fontSize: 24, color: '#9C27B0' }} />
-              </ListItemIcon>
-              <ListItemText 
-                primary="I tuoi dati sono al sicuro e non saranno mai divulgati."
-                primaryTypographyProps={{ variant: 'body2' }}
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <SecurityIcon sx={{ fontSize: 24, color: '#FF9800' }} />
-              </ListItemIcon>
-              <ListItemText 
-                primary="Il nostro sito è certificato con i più alti standard di sicurezza informatica."
-                primaryTypographyProps={{ variant: 'body2' }}
-              />
-            </ListItem>
-          </List>
-
-          <Typography variant="caption" sx={{ mt: 1, textAlign: 'center', display: 'block' }}>
-            Vuoi maggiori dettagli? Consulta qui le nostre certificazioni di sicurezza.
-          </Typography>
-        </DialogContent>
-        <Box sx={{ 
-          position: 'sticky',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: 'white',
-          borderTop: '1px solid rgba(0, 0, 0, 0.12)',
-          p: 2,
-          display: 'flex',
-          justifyContent: 'center',
-          opacity: showProceedButton ? 1 : 0,
-          transition: 'opacity 0.3s ease-in-out',
-          pointerEvents: showProceedButton ? 'auto' : 'none',
-          zIndex: 1,
-          mt: 'auto'
-        }}>
-          <Button 
-            variant="contained" 
-            onClick={() => setShowWelcomeDialog(false)}
-            sx={{ 
-              minWidth: '200px',
-              backgroundColor: '#1976d2',
-              '&:hover': {
-                backgroundColor: '#1565c0'
-              }
-            }}
-          >
-            Ho capito, procediamo
-          </Button>
-        </Box>
-      </Dialog>
-
-      <Box sx={{ width: '100%' }}>
-        {!showForm ? (
-          <>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-              <Typography variant="h6" gutterBottom>
-                Seleziona i documenti che possiedi
-              </Typography>
-              <Tooltip title="Puoi selezionare più documenti da verificare">
-                <IconButton>
-                  <InfoIcon color="action" />
+      {!showWelcomeDialog && !showForm && (
+        <>
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h5" sx={{ 
+              fontWeight: 600,
+              color: '#1976d2',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}>
+              {translations?.documents?.title || 'Seleziona i documenti che possiedi'}
+              <Tooltip 
+                title={translations?.documents?.tooltip || 'Puoi selezionare più documenti da verificare'}
+                arrow
+                placement="right"
+              >
+                <IconButton size="small">
+                  <InfoIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
-            </Box>
-            <Box sx={{ 
-              display: 'flex', 
-              flexWrap: 'wrap', 
-              gap: 3,
-              '& > *': {
-                flex: '1 1 300px',
-                maxWidth: '100%',
-              }
-            }}>
-              <Button
-                variant={selectedDocuments.includes('id') ? 'contained' : 'outlined'}
-                fullWidth
-                onClick={() => handleDocumentSelect('id')}
-                sx={{ height: '120px' }}
-              >
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <img
-                    src={selectedDocuments.includes('id') ? '/icons/IdCard.png' : '/icons/IdCardGrey.png'}
-                    alt="ID"
-                    style={{
-                      width: '50px',
-                      height: '50px',
-                      filter: selectedDocuments.includes('id') ? 'none' : 'grayscale(100%)',
-                    }}
-                  />
-                  <Typography>Carta d'identità</Typography>
-                </Box>
-              </Button>
-              <Button
-                variant={selectedDocuments.includes('passport') ? 'contained' : 'outlined'}
-                fullWidth
-                onClick={() => handleDocumentSelect('passport')}
-                sx={{ height: '120px' }}
-              >
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <img
-                    src={selectedDocuments.includes('passport') ? '/icons/Passport.png' : '/icons/PassportGrey.png'}
-                    alt="Passport"
-                    style={{
-                      width: '50px',
-                      height: '50px',
-                      filter: selectedDocuments.includes('passport') ? 'none' : 'grayscale(100%)',
-                    }}
-                  />
-                  <Typography>Passaporto</Typography>
-                </Box>
-              </Button>
-              <Button
-                variant={selectedDocuments.includes('driverLicense') ? 'contained' : 'outlined'}
-                fullWidth
-                onClick={() => handleDocumentSelect('driverLicense')}
-                sx={{ height: '120px' }}
-              >
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <img
-                    src={selectedDocuments.includes('driverLicense') ? '/icons/DriverLicense.png' : '/icons/DriverLicenseGrey.png'}
-                    alt="Driver License"
-                    style={{
-                      width: '50px',
-                      height: '50px',
-                      filter: selectedDocuments.includes('driverLicense') ? 'none' : 'grayscale(100%)',
-                    }}
-                  />
-                  <Typography>Patente di guida</Typography>
-                </Box>
-              </Button>
-            </Box>
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
-              <Button onClick={onCancel}>Annulla</Button>
-              <Button 
-                variant="contained" 
-                onClick={handleNext} 
-                disabled={selectedDocuments.length === 0}
-              >
-                Avanti
-              </Button>
-            </Box>
-          </>
-        ) : (
-          <>
-            {getCurrentContent()}
-            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
-              <Button onClick={handleBack}>
-                {currentFormIndex === 0 && !isCapturingPhoto ? 'Indietro' : 'Precedente'}
-              </Button>
-              <Button variant="contained" onClick={handleNext}>
-                {getNextButtonText()}
-              </Button>
-            </Box>
-          </>
-        )}
-      </Box>
+            </Typography>
+          </Box>
+
+          <Grid container spacing={3} sx={{ mb: 4 }}>
+            {documents.map((doc) => (
+              <Grid key={doc.type} sx={{ gridColumn: { xs: '1/-1', sm: '1/5' } }}>
+                <Paper
+                  elevation={3}
+                  onClick={() => handleDocumentSelect(doc.type)}
+                  sx={{
+                    p: 3,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 2,
+                    height: '100%',
+                    border: selectedDocuments.includes(doc.type) ? '2px solid' : '2px solid transparent',
+                    borderColor: selectedDocuments.includes(doc.type) 
+                      ? doc.type === 'idCard' 
+                        ? '#4CAF50' 
+                        : doc.type === 'passport'
+                          ? '#2196F3'
+                          : '#9C27B0'
+                      : 'transparent',
+                    bgcolor: selectedDocuments.includes(doc.type) 
+                      ? doc.type === 'idCard'
+                        ? 'rgba(76, 175, 80, 0.08)'
+                        : doc.type === 'passport'
+                          ? 'rgba(33, 150, 243, 0.08)'
+                          : 'rgba(156, 39, 176, 0.08)'
+                      : 'transparent',
+                    '&:hover': {
+                      bgcolor: doc.type === 'idCard'
+                        ? 'rgba(76, 175, 80, 0.04)'
+                        : doc.type === 'passport'
+                          ? 'rgba(33, 150, 243, 0.04)'
+                          : 'rgba(156, 39, 176, 0.04)',
+                    },
+                    transition: 'all 0.2s ease-in-out'
+                  }}
+                >
+                  {doc.icon}
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography variant="h6" gutterBottom>
+                      {doc.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {doc.description}
+                    </Typography>
+                  </Box>
+                  {selectedDocuments.includes(doc.type) && (
+                    <CheckCircleIcon 
+                      sx={{ 
+                        color: doc.type === 'idCard' 
+                          ? '#4CAF50' 
+                          : doc.type === 'passport'
+                            ? '#2196F3'
+                            : '#9C27B0',
+                        position: 'absolute',
+                        top: 8,
+                        right: 8
+                      }} 
+                    />
+                  )}
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between',
+            mt: 4
+          }}>
+            <Button 
+              variant="text"
+              onClick={onCancel}
+              sx={{ 
+                color: '#666',
+                '&:hover': {
+                  bgcolor: 'rgba(0,0,0,0.05)'
+                }
+              }}
+            >
+              {translations?.verification?.buttons?.back || 'Indietro'}
+            </Button>
+            <Button 
+              variant="contained"
+              onClick={() => setShowForm(true)}
+              disabled={selectedDocuments.length === 0}
+              sx={{ 
+                minWidth: 120,
+                bgcolor: '#1976d2',
+                '&:hover': {
+                  bgcolor: '#1565c0'
+                }
+              }}
+            >
+              {translations?.verification?.buttons?.next || 'Avanti'}
+            </Button>
+          </Box>
+        </>
+      )}
+
+      {(showForm || isCapturingPhoto) && (
+        <Box>
+          {getCurrentContent()}
+        </Box>
+      )}
     </Container>
   );
 };

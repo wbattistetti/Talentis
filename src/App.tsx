@@ -27,8 +27,7 @@ import {
   Globe
 } from 'lucide-react';
 import { 
-  IT, GB, BG, ES, FR, DE, PL, RO, PT, NL, GR, HU, CZ, SK, HR, SI, LT, LV, EE, MT,
-  DK, SE, FI, NO, IE, AT, BE, CH, UA, TR
+  IT, GB, BG
 } from 'country-flag-icons/react/3x2';
 import Team from './components/Team';
 import CandidatePresentation from './components/CandidatePresentation';
@@ -42,6 +41,8 @@ import Navigation from './components/Navigation';
 import { SupportedLanguage, TeamMember, Translation } from './types';
 import { translations } from './translations';
 import { DocumentSelection } from './components/IDCheck/DocumentSelection';
+import { LanguageProvider } from './contexts/LanguageContext';
+import i18n from './i18n';
 
 const teamMembers = {
   it: [
@@ -285,64 +286,18 @@ const teamMembers = {
   ]
 };
 
+type SupportedLanguage = 'it' | 'en' | 'bg';
+
 const languages = [
-  { code: 'it' as const, name: 'Italiano', flag: IT },
-  { code: 'en' as const, name: 'English', flag: GB },
-  { code: 'bg' as const, name: 'Български', flag: BG },
-  { code: 'es' as const, name: 'Español', flag: ES },
-  { code: 'fr' as const, name: 'Français', flag: FR },
-  { code: 'de' as const, name: 'Deutsch', flag: DE },
-  { code: 'pl' as const, name: 'Polski', flag: PL },
-  { code: 'ro' as const, name: 'Română', flag: RO },
-  { code: 'pt' as const, name: 'Português', flag: PT },
-  { code: 'nl' as const, name: 'Nederlands', flag: NL },
-  { code: 'el' as const, name: 'Ελληνικά', flag: GR },
-  { code: 'hu' as const, name: 'Magyar', flag: HU },
-  { code: 'cs' as const, name: 'Čeština', flag: CZ },
-  { code: 'sk' as const, name: 'Slovenčina', flag: SK },
-  { code: 'hr' as const, name: 'Hrvatski', flag: HR },
-  { code: 'sl' as const, name: 'Slovenščina', flag: SI },
-  { code: 'lt' as const, name: 'Lietuvių', flag: LT },
-  { code: 'lv' as const, name: 'Latviešu', flag: LV },
-  { code: 'et' as const, name: 'Eesti', flag: EE },
-  { code: 'mt' as const, name: 'Malti', flag: MT },
-  { code: 'da' as const, name: 'Dansk', flag: DK },
-  { code: 'sv' as const, name: 'Svenska', flag: SE },
-  { code: 'fi' as const, name: 'Suomi', flag: FI },
-  { code: 'no' as const, name: 'Norsk', flag: NO },
-  { code: 'ga' as const, name: 'Gaeilge', flag: IE },
-  { code: 'de-at' as const, name: 'Österreichisch', flag: AT },
-  { code: 'de-ch' as const, name: 'Schweizerdeutsch', flag: CH }
+  { code: 'it', label: 'Italiano' },
+  { code: 'en', label: 'English' },
+  { code: 'bg', label: 'български' },
 ];
 
-const languageLabels = {
-  it: "Parlo italiano",
-  en: "I speak English",
-  bg: "Говоря български",
-  es: "Hablo español",
-  fr: "Je parle français",
-  de: "Ich spreche Deutsch",
-  pl: "Mówię po polsku",
-  ro: "Vorbesc română",
-  pt: "Falo português",
-  nl: "Ik spreek Nederlands",
-  el: "Μιλάω ελληνικά",
-  hu: "Beszélek magyarul",
-  cs: "Mluvím česky",
-  sk: "Hovorím po slovensky",
-  hr: "Govorim hrvatski",
-  sl: "Govorim slovensko",
-  lt: "Kalbu lietuviškai",
-  lv: "Runāju latviski",
-  et: "Räägin eesti keelt",
-  mt: "Nitkellem bil-Malti",
-  da: "Jeg taler dansk",
-  sv: "Jag talar svenska",
-  fi: "Puhun suomea",
-  no: "Jeg snakker norsk",
-  ga: "Labhraím Gaeilge",
-  'de-at': "Ich spreche Österreichisch",
-  'de-ch': "Ich spreche Schweizerdeutsch"
+const languageLabels: Record<SupportedLanguage, string> = {
+  it: 'Italiano',
+  en: 'English',
+  bg: 'български',
 };
 
 type ViewType = 'team' | 'candidate' | 'id-profile' | 'document' | 'home';
@@ -355,6 +310,7 @@ function App() {
   const [isFirstVisit, setIsFirstVisit] = useState(true);
   const [showSplash, setShowSplash] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [showLanguageSelector, setShowLanguageSelector] = useState(true);
 
   // Rilevamento lingua basato su IP
   useEffect(() => {
@@ -453,19 +409,25 @@ function App() {
 
   const t = selectedLanguage ? translations[selectedLanguage] : translations.it;
 
-  const handleLanguageSelect = (language: string) => {
-    if (language === 'it' || language === 'en' || language === 'bg') {
-      setSelectedLanguage(language as SupportedLanguage);
-      if (language === 'it') {
-        setShowSplash(true);
-        setShowWelcome(false);
-      } else {
-        setShowSplash(false);
-        setShowWelcome(true);
-      }
-    } else {
-      // Per tutte le altre lingue, mostra un messaggio che indica che sono in sviluppo
-      alert('This language is coming soon! Please select Italian, English, or Bulgarian for now.');
+  const handleLanguageSelect = (language: SupportedLanguage | null) => {
+    if (language) {
+      setSelectedLanguage(language);
+      setShowLanguageSelector(false);
+      i18n.changeLanguage(language);
+      setShowWelcome(true);
+    }
+  };
+
+  const handleLanguageClick = (language: SupportedLanguage | null) => {
+    if (language === 'it') {
+      setSelectedLanguage('it');
+      i18n.changeLanguage('it');
+    } else if (language === 'en') {
+      setSelectedLanguage('en');
+      i18n.changeLanguage('en');
+    } else if (language === 'bg') {
+      setSelectedLanguage('bg');
+      i18n.changeLanguage('bg');
     }
   };
 
@@ -487,7 +449,21 @@ function App() {
     }
 
     if (showSplash) {
-      return <Splash onContinue={handleSplashContinue} />;
+      return <Splash 
+        onContinue={handleSplashContinue} 
+        translations={translations[selectedLanguage as SupportedLanguage]} 
+      />;
+    }
+
+    if (currentView === 'document') {
+      return <DocumentSelection 
+        onCancel={() => setCurrentView('team')} 
+        translations={translations[selectedLanguage]}
+        onComplete={(data) => {
+          console.log('Document verification completed:', data);
+          setCurrentView('team');
+        }}
+      />;
     }
 
     if (showWelcome && (selectedLanguage === 'it' || selectedLanguage === 'en' || selectedLanguage === 'bg')) {
@@ -497,12 +473,14 @@ function App() {
       />;
     }
 
-    if (currentView === 'document') {
-      return <DocumentSelection onCancel={() => setCurrentView('team')} />;
-    }
-
     if (currentView === 'team') {
-      return <Team teamMembers={teamMembers} language={selectedLanguage} onBack={() => setCurrentView('home')} />;
+      return (
+        <Team 
+          teamMembers={teamMembers[selectedLanguage] || teamMembers['en']} 
+          onBack={() => handleViewChange('home')}
+          language={selectedLanguage as SupportedLanguage}
+        />
+      );
     }
 
     if (currentView === 'candidate') {
@@ -517,17 +495,19 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {selectedLanguage && !showSplash && !showWelcome && (
-        <Navigation
-          currentView={currentView}
-          onViewChange={handleViewChange}
-          selectedLanguage={selectedLanguage}
-          translations={translations[selectedLanguage]}
-        />
-      )}
-      {renderContent()}
-    </div>
+    <LanguageProvider>
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+        {selectedLanguage && !showSplash && !showWelcome && (
+          <Navigation
+            currentView={currentView}
+            onViewChange={handleViewChange}
+            selectedLanguage={selectedLanguage}
+            translations={translations[selectedLanguage]}
+          />
+        )}
+        {renderContent()}
+      </div>
+    </LanguageProvider>
   );
 }
 

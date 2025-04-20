@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
-import { Box, TextField, Typography } from '@mui/material';
+import { Box, TextField, Typography, Button } from '@mui/material';
 
 interface IDCardFormProps {
   onDataChange: (data: any) => void;
+  onBack: () => void;
+  onNext: () => void;
   personalData?: {
     nome?: string;
     cognome?: string;
@@ -12,7 +14,7 @@ interface IDCardFormProps {
   };
 }
 
-export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, personalData }) => {
+export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, onNext, personalData }) => {
   useEffect(() => {
     if (personalData) {
       onDataChange(personalData);
@@ -24,7 +26,15 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, personalDa
   };
 
   return (
-    <Box>
+    <Box sx={{
+      backgroundColor: '#f5f8ff',  // Sfondo azzurro pastello
+      border: '1px solid #e0e7ff',  // Bordo leggermente più scuro dello sfondo
+      borderRadius: '16px',         // Bordi arrotondati
+      padding: '24px',              // Padding interno
+      boxShadow: '0 2px 4px rgba(0,0,0,0.05)',  // Leggera ombra
+      maxWidth: '740px',            // Limita la larghezza massima
+      margin: '0 auto'              // Centra il box
+    }}>
       <Box sx={{ 
         display: 'flex', 
         alignItems: 'center', 
@@ -36,8 +46,8 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, personalDa
           alt="Carta d'identità"
           style={{ width: '96px', height: '96px' }}
         />
-        <Typography variant="h5">
-          Carta d'identità
+        <Typography variant="h5" color="error">
+          Inserisci i dati della carta d'identità
         </Typography>
       </Box>
 
@@ -50,8 +60,8 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, personalDa
           display: 'flex', 
           gap: 1.5,
           '& .MuiTextField-root': {
-            flex: 1,
-            minWidth: 0
+            width: '220px',
+            flex: 'none'
           }
         }}>
           <Box>
@@ -78,19 +88,16 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, personalDa
             />
           </Box>
 
-          <Box>
+          <Box sx={{ position: 'relative' }}>
             <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
               Data di nascita
             </Typography>
             <TextField
               size="small"
-              type="date"
+              placeholder="gg/mm/aaaa"
               variant="outlined"
               value={personalData?.dataNascita || ''}
               onChange={(e) => handleInputChange('dataNascita', e.target.value)}
-              InputLabelProps={{
-                shrink: true,
-              }}
             />
           </Box>
         </Box>
@@ -99,8 +106,8 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, personalDa
           display: 'flex', 
           gap: 1.5,
           '& .MuiTextField-root': {
-            flex: 1,
-            minWidth: 0
+            width: '220px',
+            flex: 'none'
           }
         }}>
           <Box>
@@ -121,14 +128,51 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, personalDa
             </Typography>
             <TextField
               size="small"
-              type="date"
+              placeholder="gg/mm/aaaa"
               variant="outlined"
               value={personalData?.dataScadenza || ''}
               onChange={(e) => handleInputChange('dataScadenza', e.target.value)}
-              InputLabelProps={{
-                shrink: true,
-              }}
             />
+          </Box>
+        </Box>
+
+        <Box sx={{ 
+          position: 'relative',
+          mt: 4,
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          width: '100%'
+        }}>
+          <Button 
+            variant="text"
+            onClick={onBack}
+            sx={{ 
+              color: '#1976d2',
+              fontSize: '0.875rem'
+            }}
+          >
+            INDIETRO
+          </Button>
+          <Box sx={{ 
+            position: 'absolute',
+            left: '484px'
+          }}>
+            <Button 
+              variant="contained" 
+              onClick={onNext}
+              sx={{ 
+                backgroundColor: '#1976d2',
+                '&:hover': {
+                  backgroundColor: '#1565c0'
+                },
+                fontSize: '0.875rem',
+                py: 1,
+                width: '220px'
+              }}
+            >
+              AVANTI
+            </Button>
           </Box>
         </Box>
       </Box>

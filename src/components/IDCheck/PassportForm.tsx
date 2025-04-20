@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
-import { Box, TextField, Typography } from '@mui/material';
+import { Box, TextField, Typography, Button } from '@mui/material';
 
 interface PassportFormProps {
   onDataChange: (data: any) => void;
+  onNext: () => void;
+  onBack: () => void;
   personalData?: {
     nome?: string;
     cognome?: string;
@@ -12,7 +14,7 @@ interface PassportFormProps {
   };
 }
 
-export const PassportForm: React.FC<PassportFormProps> = ({ onDataChange, personalData }) => {
+export const PassportForm: React.FC<PassportFormProps> = ({ onDataChange, onNext, onBack, personalData }) => {
   useEffect(() => {
     if (personalData) {
       onDataChange(personalData);
@@ -131,6 +133,27 @@ export const PassportForm: React.FC<PassportFormProps> = ({ onDataChange, person
             />
           </Box>
         </Box>
+      </Box>
+
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between',
+        mt: 3
+      }}>
+        <Button 
+          variant="outlined" 
+          onClick={onBack}
+          sx={{ minWidth: 120 }}
+        >
+          Indietro
+        </Button>
+        <Button 
+          variant="contained"
+          onClick={onNext}
+          sx={{ minWidth: 120 }}
+        >
+          Avanti
+        </Button>
       </Box>
     </Box>
   );

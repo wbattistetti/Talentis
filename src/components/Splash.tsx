@@ -17,9 +17,10 @@ import {
 
 interface SplashProps {
   onContinue: () => void;
+  translations: any;
 }
 
-const Splash: React.FC<SplashProps> = ({ onContinue }) => {
+const Splash: React.FC<SplashProps> = ({ onContinue, translations }) => {
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -75,11 +76,11 @@ const Splash: React.FC<SplashProps> = ({ onContinue }) => {
               className="space-y-4"
             >
               <h1 className="text-3xl font-bold text-gray-900">
-                Benvenuto in Talentis: il nuovo rivoluzionario portale che trasforma il modo in cui trovi lavoro nel tuo paese o nel mondo!
+                {translations.splash.title}
               </h1>
               
               <p className="text-xl text-gray-600 leading-relaxed mb-1">
-                Che tu stia cercando la tua prossima opportunità vicino a casa o un'esperienza professionale in qualsiasi parte del mondo, Talentis ti aiuterà in modo sorprendente.
+                {translations.splash.description}
               </p>
 
               <motion.button
@@ -89,7 +90,7 @@ const Splash: React.FC<SplashProps> = ({ onContinue }) => {
                 onClick={onContinue}
                 className="inline-flex items-center px-8 py-4 border border-transparent text-xl font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
               >
-                Vuoi scoprirlo?
+                {translations.splash.button}
               </motion.button>
             </motion.div>
           </motion.div>

@@ -10,19 +10,24 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
+import { useTranslation } from 'react-i18next';
 
 interface PhotoCaptureProps {
+  onPhotoCapture: (photoData: string) => void;
   onNext: () => void;
   onBack: () => void;
-  onPhotoCapture: (photo: string) => void;
   documentType: string;
+  isFront?: boolean; // true per il fronte, false per il retro
+  customTitle?: string; // titolo personalizzato opzionale
 }
 
 const PhotoCapture: React.FC<PhotoCaptureProps> = ({
+  onPhotoCapture,
   onNext,
   onBack,
-  onPhotoCapture,
   documentType,
+  isFront = true, // default a true per retrocompatibilità
+  customTitle
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -32,14 +37,17 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [photoVerificationState, setPhotoVerificationState] = useState<'initial' | 'verified' | 'rejected'>('initial');
   const [qualityResponse, setQualityResponse] = useState<string>('');
-  const [showLiveView, setShowLiveView] = useState(false);
+  const [showLiveView, setShowLiveView] = useState(true);
   const [lastCapturedPhoto, setLastCapturedPhoto] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const initCamera = async () => {
       try {
+        console.log('Initializing camera with document type:', documentType);
         setIsLoading(true);
         setError(null);
+        setShowLiveView(true);
 
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
           throw new Error('La fotocamera non è supportata su questo browser');
@@ -49,8 +57,11 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
           video: true
         });
 
+        console.log('Camera stream obtained:', !!mediaStream);
+
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
+          console.log('Video element source set');
         }
 
         setStream(mediaStream);
@@ -71,11 +82,28 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
     };
   }, []);
 
+  // Reset dello stato quando si passa da fronte a retro
+  useEffect(() => {
+    console.log('Switching to', isFront ? 'front' : 'back', 'side');
+    setCapturedPhoto(null);
+    setQualityResponse('');
+    setShowLiveView(true);
+    setPhotoVerificationState('initial');
+    
+    // Riattiva lo stream se necessario
+    if (videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
+      videoRef.current.play();
+    }
+  }, [isFront]);
+
   const handlePhotoQualityResponse = (isGood: boolean) => {
     if (isGood) {
       setPhotoVerificationState('verified');
+      setShowLiveView(false);
     } else {
       setPhotoVerificationState('rejected');
+      setShowLiveView(true);
     }
   };
 
@@ -83,6 +111,11 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
     setCapturedPhoto(null);
     setError(null);
     setPhotoVerificationState('initial');
+    setShowLiveView(true);
+    if (videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
+      videoRef.current.play();
+    }
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,6 +166,7 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
       setIsLoading(true);
       setError(null);
       setPhotoVerificationState('initial');
+      setQualityResponse(''); // Reset radio button selection
 
       const canvas = document.createElement('canvas');
       canvas.width = videoRef.current.videoWidth;
@@ -167,10 +201,13 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
     
     if (value === 'no') {
       setShowLiveView(true);
-      setPhotoVerificationState('initial');
+      // Assicuriamoci che lo stream sia attivo
+      if (videoRef.current && stream) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
     } else {
       setShowLiveView(false);
-      handlePhotoQualityResponse(true);
     }
   };
 
@@ -203,12 +240,12 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
         }}>
           <img
             src={`/icons/${
-              documentType === 'Carta d\'identità' ? 'IdCard' :
-              documentType === 'Passaporto' ? 'Passport' :
+              documentType === 'idCard' ? 'IdCard' :
+              documentType === 'passport' ? 'Passport' :
               'DriverLicense'
             }.png`}
             alt={documentType}
-            style={{ width: 40, height: 40 }}
+            style={{ width: 24, height: 24 }}
           />
           <Typography 
             sx={{ 
@@ -217,7 +254,13 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
               color: '#1a1a1a'
             }}
           >
-            Foto fronte {documentType}
+            {customTitle || (isFront ? t('photoCapture.frontTitle') : t('photoCapture.backTitle'))} {
+              !customTitle && (
+                documentType === 'idCard' ? t('documents.idCard') :
+                documentType === 'passport' ? t('documents.passport') :
+                t('documents.driverLicense')
+              )
+            }
           </Typography>
         </Box>
 
@@ -251,29 +294,38 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
               </Typography>
             </Box>
           ) : (
-            <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+            <>
+              {/* Live Stream - sempre visibile ma può essere coperto */}
               <video
                 ref={videoRef}
                 autoPlay
                 playsInline
+                muted
                 style={{ 
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'contain',
-                  display: 'block',
-                  visibility: showLiveView || !capturedPhoto ? 'visible' : 'hidden'
+                  objectFit: 'cover',
+                  zIndex: 1
                 }}
               />
-              {capturedPhoto && !showLiveView && (
+
+              {/* Riquadro foto - si sovrappone al live stream quando presente */}
+              {capturedPhoto && (
                 <Box
                   sx={{
                     position: 'absolute',
                     top: 0,
                     left: 0,
-                    right: 0,
-                    bottom: 0,
+                    width: '100%',
+                    height: '100%',
                     backgroundColor: '#000',
-                    zIndex: 1
+                    opacity: showLiveView ? 0 : 1,
+                    transition: 'opacity 0.3s ease-in-out',
+                    pointerEvents: showLiveView ? 'none' : 'auto',
+                    zIndex: 2
                   }}
                 >
                   <img
@@ -287,106 +339,101 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
                   />
                 </Box>
               )}
-            </Box>
+            </>
           )}
         </Box>
 
-        <Box sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          p: 2,
-          width: '100%',
-          borderTop: '1px solid #e0e0e0'
-        }}>
-          <Button
-            variant="outlined"
-            onClick={onBack}
-            startIcon={<ArrowBackIcon />}
-          >
-            INDIETRO
-          </Button>
-
-          {(showLiveView || !capturedPhoto) && (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={capturePhoto}
-              startIcon={<PhotoCameraIcon />}
-              disabled={!stream || isLoading}
+        <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {/* Pulsanti principali */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button 
+              variant="outlined" 
+              onClick={onBack}
+              sx={{ minWidth: 120 }}
             >
-              {showLiveView ? 'SCATTA DI NUOVO' : 'SCATTA'}
+              {t('buttons.back')}
             </Button>
-          )}
-        </Box>
-      </Box>
-
-      {capturedPhoto && (
-        <Box sx={{ 
-          mt: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          width: '100%',
-          gap: 1,
-          pb: 2
-        }}>
-          <Typography sx={{ 
-            fontSize: '0.9rem',
-            textAlign: 'center'
-          }}>
-            La foto è a fuoco? Riesci a leggere bene tutte le scritte?
-          </Typography>
-
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2,
-            justifyContent: 'center'
-          }}>
-            <FormControl>
-              <RadioGroup
-                row
-                value={qualityResponse}
-                onChange={handleQualityChange}
-                sx={{
-                  justifyContent: 'center',
-                  '& .MuiFormControlLabel-root': {
-                    mr: 3,
-                    mb: 0
-                  }
-                }}
+            
+            {/* Mostra "Scatta" se non c'è ancora una foto */}
+            {!capturedPhoto && (
+              <Button 
+                variant="contained"
+                onClick={capturePhoto}
+                sx={{ minWidth: 120 }}
               >
-                <FormControlLabel 
-                  value="yes" 
-                  control={<Radio size="small" />} 
-                  label="Sì" 
-                />
-                <FormControlLabel 
-                  value="no" 
-                  control={<Radio size="small" />} 
-                  label="No" 
-                />
-              </RadioGroup>
-            </FormControl>
+                {t('buttons.capture')}
+              </Button>
+            )}
 
-            {photoVerificationState === 'verified' && (
+            {/* Mostra "Avanti" se la foto è stata verificata (qualityResponse === 'yes') */}
+            {capturedPhoto && qualityResponse === 'yes' && (
               <Button
                 variant="contained"
                 color="primary"
                 onClick={() => onPhotoCapture(capturedPhoto)}
-                sx={{ 
-                  minWidth: 160,
-                  height: 32,
-                  fontSize: '0.9rem'
-                }}
+                sx={{ minWidth: 120 }}
               >
-                Avanti
+                {t('buttons.next')}
+              </Button>
+            )}
+
+            {/* Mostra "Scatta di nuovo" se la foto è stata rifiutata (qualityResponse === 'no') */}
+            {capturedPhoto && qualityResponse === 'no' && (
+              <Button 
+                variant="contained"
+                onClick={capturePhoto}
+                sx={{ minWidth: 120 }}
+              >
+                {t('buttons.capture')}
               </Button>
             )}
           </Box>
+
+          {/* Domanda sulla qualità della foto - sempre visibile dopo il primo scatto */}
+          {capturedPhoto && (
+            <Box sx={{ 
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              width: '100%',
+              gap: 1
+            }}>
+              <Typography sx={{ 
+                fontSize: '0.9rem',
+                textAlign: 'center'
+              }}>
+                La foto è a fuoco e ben visibile?
+              </Typography>
+
+              <FormControl>
+                <RadioGroup
+                  row
+                  value={qualityResponse}
+                  onChange={handleQualityChange}
+                  sx={{
+                    justifyContent: 'center',
+                    '& .MuiFormControlLabel-root': {
+                      mr: 3,
+                      mb: 0
+                    }
+                  }}
+                >
+                  <FormControlLabel 
+                    value="yes" 
+                    control={<Radio size="small" />} 
+                    label="Sì" 
+                  />
+                  <FormControlLabel 
+                    value="no" 
+                    control={<Radio size="small" />} 
+                    label="No" 
+                  />
+                </RadioGroup>
+              </FormControl>
+            </Box>
+          )}
         </Box>
-      )}
+      </Box>
 
       {error && (
         <Typography color="error" sx={{ mb: 2 }}>
