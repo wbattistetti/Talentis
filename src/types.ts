@@ -83,6 +83,11 @@ export interface Translation {
     cancel: string;
     understand: string;
     capture: string;
+    startRecording: string;
+    playback: string;
+    incorrect: string;
+    correct: string;
+    repeat: string;
   };
   verification: {
     title: string;
@@ -119,5 +124,26 @@ export interface Translation {
       driverLicense: string;
       tooltip: string;
     };
+  };
+  photoCapture: {
+    qualityQuestion: string;
+    yes: string;
+    no: string;
+    frontTitle: string;
+    backTitle: string;
+  };
+  biometric: {
+    startInstructions: string;
+    lookStraight: string;
+    turnLeft: string;
+    turnRight: string;
+    liftChin: string;
+    lowerChin: string;
+    blink: string;
+    smile: string;
+    finished: string;
+    verifyMovements: string;
+    incorrect: string;
+    correct: string;
   };
 } 

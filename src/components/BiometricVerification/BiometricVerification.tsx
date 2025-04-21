@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Stepper, Step, StepLabel, Typography } from '@mui/material';
-import { SelfieCamera } from './components/SelfieCapture/SelfieCamera';
-import { VideoRecorder } from './components/IdentityVideo/VideoRecorder';
+import SelfieCapture from './components/SelfieCapture/SelfieCapture';
+import SelfieVideo from './components/SelfieVideo/SelfieVideo';
 
 interface BiometricVerificationProps {
   onComplete: (data: BiometricData) => void;
@@ -25,6 +25,7 @@ export const BiometricVerification: React.FC<BiometricVerificationProps> = ({
 }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [biometricData, setBiometricData] = useState<Partial<BiometricData>>({});
+  const [videoStep, setVideoStep] = useState(-1);
 
   const handleSelfieCapture = (selfieData: string) => {
     setBiometricData(prev => ({ ...prev, selfie: selfieData }));
@@ -40,6 +41,11 @@ export const BiometricVerification: React.FC<BiometricVerificationProps> = ({
     setBiometricData(data);
     setActiveStep(2);
     onComplete(data);
+  };
+
+  const handleVideoBack = () => {
+    setVideoStep(-1);
+    setActiveStep(0);
   };
 
   return (
@@ -58,16 +64,18 @@ export const BiometricVerification: React.FC<BiometricVerificationProps> = ({
 
       <Box>
         {activeStep === 0 && (
-          <SelfieCamera
+          <SelfieCapture
             onCapture={handleSelfieCapture}
             onBack={onCancel}
           />
         )}
 
         {activeStep === 1 && (
-          <VideoRecorder
+          <SelfieVideo
             onRecord={handleVideoRecord}
-            onBack={() => setActiveStep(0)}
+            onBack={handleVideoBack}
+            currentStep={videoStep}
+            setCurrentStep={setVideoStep}
           />
         )}
 

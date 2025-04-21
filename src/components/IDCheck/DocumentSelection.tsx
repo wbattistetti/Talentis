@@ -16,6 +16,8 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import PublicIcon from '@mui/icons-material/Public';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import { CreditCard as IdCardIcon, DriveEta as DriversLicenseIcon, Assignment as PassportIcon } from '@mui/icons-material';
+import BiometricPopup from '../BiometricVerification/BiometricPopup';
+import { BiometricVerification } from '../BiometricVerification/BiometricVerification';
 
 interface DocumentSelectionProps {
   onCancel: () => void;
@@ -58,6 +60,8 @@ export const DocumentSelection = ({ onCancel, translations, onComplete }: Docume
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [qualityResponse, setQualityResponse] = useState('');
   const [showLiveView, setShowLiveView] = useState(true);
+  const [showBiometricPopup, setShowBiometricPopup] = useState(false);
+  const [showBiometricVerification, setShowBiometricVerification] = useState(false);
 
   console.log('DocumentSelection rendering with:', {
     showWelcomeDialog,
@@ -151,13 +155,30 @@ export const DocumentSelection = ({ onCancel, translations, onComplete }: Docume
     const isLastPhoto = isCapturingBack || !needsBackPhoto(currentDoc);
 
     if (isLastDocument && isLastPhoto) {
-      // Se questa è l'ultima foto dell'ultimo documento, completa il processo
-      console.log('Ultima foto catturata, completamento processo');
-      onComplete(updatedDocumentsData);
+      // Se questa è l'ultima foto, mostra il popup biometrico invece di completare subito
+      setShowBiometricPopup(true);
     } else {
       // Altrimenti procedi al prossimo step
       handleNext();
     }
+  };
+
+  const handleBiometricPopupClose = () => {
+    setShowBiometricPopup(false);
+  };
+
+  const handleBiometricPopupProceed = () => {
+    setShowBiometricPopup(false);
+    setShowBiometricVerification(true);
+  };
+
+  const handleBiometricComplete = (biometricData: any) => {
+    // Combina i dati dei documenti con i dati biometrici
+    const completeData = {
+      documents: documentsData,
+      biometric: biometricData
+    };
+    onComplete(completeData);
   };
 
   const needsBackPhoto = (documentType: string) => {
@@ -278,144 +299,159 @@ export const DocumentSelection = ({ onCancel, translations, onComplete }: Docume
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <VerificationDialog 
-        open={showWelcomeDialog} 
-        onClose={() => {
-          console.log('Dialog closing');
-          setShowWelcomeDialog(false);
-        }}
-        translations={translations}
-      />
-
-      {!showWelcomeDialog && !showForm && (
+      {showBiometricVerification ? (
+        <BiometricVerification
+          onComplete={handleBiometricComplete}
+          onCancel={() => setShowBiometricVerification(false)}
+        />
+      ) : (
         <>
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h5" sx={{ 
-              fontWeight: 600,
-              color: '#1976d2',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1
-            }}>
-              {translations?.documents?.title || 'Seleziona i documenti che possiedi'}
-              <Tooltip 
-                title={translations?.documents?.tooltip || 'Puoi selezionare più documenti da verificare'}
-                arrow
-                placement="right"
-              >
-                <IconButton size="small">
-                  <InfoIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            </Typography>
-          </Box>
+          <VerificationDialog 
+            open={showWelcomeDialog} 
+            onClose={() => {
+              console.log('Dialog closing');
+              setShowWelcomeDialog(false);
+            }}
+            translations={translations}
+          />
 
-          <Grid container spacing={3} sx={{ mb: 4 }}>
-            {documents.map((doc) => (
-              <Grid key={doc.type} sx={{ gridColumn: { xs: '1/-1', sm: '1/5' } }}>
-                <Paper
-                  elevation={3}
-                  onClick={() => handleDocumentSelect(doc.type)}
-                  sx={{
-                    p: 3,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: 2,
-                    height: '100%',
-                    border: selectedDocuments.includes(doc.type) ? '2px solid' : '2px solid transparent',
-                    borderColor: selectedDocuments.includes(doc.type) 
-                      ? doc.type === 'idCard' 
-                        ? '#4CAF50' 
-                        : doc.type === 'passport'
-                          ? '#2196F3'
-                          : '#9C27B0'
-                      : 'transparent',
-                    bgcolor: selectedDocuments.includes(doc.type) 
-                      ? doc.type === 'idCard'
-                        ? 'rgba(76, 175, 80, 0.08)'
-                        : doc.type === 'passport'
-                          ? 'rgba(33, 150, 243, 0.08)'
-                          : 'rgba(156, 39, 176, 0.08)'
-                      : 'transparent',
+          {!showWelcomeDialog && !showForm && (
+            <>
+              <Box sx={{ mb: 4 }}>
+                <Typography variant="h5" sx={{ 
+                  fontWeight: 600,
+                  color: '#1976d2',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1
+                }}>
+                  {translations?.documents?.title || 'Seleziona i documenti che possiedi'}
+                  <Tooltip 
+                    title={translations?.documents?.tooltip || 'Puoi selezionare più documenti da verificare'}
+                    arrow
+                    placement="right"
+                  >
+                    <IconButton size="small">
+                      <InfoIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </Typography>
+              </Box>
+
+              <Grid container spacing={3} sx={{ mb: 4 }}>
+                {documents.map((doc) => (
+                  <Grid key={doc.type} sx={{ gridColumn: { xs: '1/-1', sm: '1/5' } }}>
+                    <Paper
+                      elevation={3}
+                      onClick={() => handleDocumentSelect(doc.type)}
+                      sx={{
+                        p: 3,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 2,
+                        height: '100%',
+                        border: selectedDocuments.includes(doc.type) ? '2px solid' : '2px solid transparent',
+                        borderColor: selectedDocuments.includes(doc.type) 
+                          ? doc.type === 'idCard' 
+                            ? '#4CAF50' 
+                            : doc.type === 'passport'
+                              ? '#2196F3'
+                              : '#9C27B0'
+                          : 'transparent',
+                        bgcolor: selectedDocuments.includes(doc.type) 
+                          ? doc.type === 'idCard'
+                            ? 'rgba(76, 175, 80, 0.08)'
+                            : doc.type === 'passport'
+                              ? 'rgba(33, 150, 243, 0.08)'
+                              : 'rgba(156, 39, 176, 0.08)'
+                          : 'transparent',
+                        '&:hover': {
+                          bgcolor: doc.type === 'idCard'
+                            ? 'rgba(76, 175, 80, 0.04)'
+                            : doc.type === 'passport'
+                              ? 'rgba(33, 150, 243, 0.04)'
+                              : 'rgba(156, 39, 176, 0.04)',
+                        },
+                        transition: 'all 0.2s ease-in-out'
+                      }}
+                    >
+                      {doc.icon}
+                      <Box sx={{ textAlign: 'center' }}>
+                        <Typography variant="h6" gutterBottom>
+                          {doc.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {doc.description}
+                        </Typography>
+                      </Box>
+                      {selectedDocuments.includes(doc.type) && (
+                        <CheckCircleIcon 
+                          sx={{ 
+                            color: doc.type === 'idCard' 
+                              ? '#4CAF50' 
+                              : doc.type === 'passport'
+                                ? '#2196F3'
+                                : '#9C27B0',
+                            position: 'absolute',
+                            top: 8,
+                            right: 8
+                          }} 
+                        />
+                      )}
+                    </Paper>
+                  </Grid>
+                ))}
+              </Grid>
+
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                mt: 4
+              }}>
+                <Button 
+                  variant="text"
+                  onClick={onCancel}
+                  sx={{ 
+                    color: '#666',
                     '&:hover': {
-                      bgcolor: doc.type === 'idCard'
-                        ? 'rgba(76, 175, 80, 0.04)'
-                        : doc.type === 'passport'
-                          ? 'rgba(33, 150, 243, 0.04)'
-                          : 'rgba(156, 39, 176, 0.04)',
-                    },
-                    transition: 'all 0.2s ease-in-out'
+                      bgcolor: 'rgba(0,0,0,0.05)'
+                    }
                   }}
                 >
-                  {doc.icon}
-                  <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="h6" gutterBottom>
-                      {doc.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {doc.description}
-                    </Typography>
-                  </Box>
-                  {selectedDocuments.includes(doc.type) && (
-                    <CheckCircleIcon 
-                      sx={{ 
-                        color: doc.type === 'idCard' 
-                          ? '#4CAF50' 
-                          : doc.type === 'passport'
-                            ? '#2196F3'
-                            : '#9C27B0',
-                        position: 'absolute',
-                        top: 8,
-                        right: 8
-                      }} 
-                    />
-                  )}
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
+                  {translations?.verification?.buttons?.back || 'Indietro'}
+                </Button>
+                <Button 
+                  variant="contained"
+                  onClick={() => setShowForm(true)}
+                  disabled={selectedDocuments.length === 0}
+                  sx={{ 
+                    minWidth: 120,
+                    bgcolor: '#1976d2',
+                    '&:hover': {
+                      bgcolor: '#1565c0'
+                    }
+                  }}
+                >
+                  {translations?.verification?.buttons?.next || 'Avanti'}
+                </Button>
+              </Box>
+            </>
+          )}
 
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'space-between',
-            mt: 4
-          }}>
-            <Button 
-              variant="text"
-              onClick={onCancel}
-              sx={{ 
-                color: '#666',
-                '&:hover': {
-                  bgcolor: 'rgba(0,0,0,0.05)'
-                }
-              }}
-            >
-              {translations?.verification?.buttons?.back || 'Indietro'}
-            </Button>
-            <Button 
-              variant="contained"
-              onClick={() => setShowForm(true)}
-              disabled={selectedDocuments.length === 0}
-              sx={{ 
-                minWidth: 120,
-                bgcolor: '#1976d2',
-                '&:hover': {
-                  bgcolor: '#1565c0'
-                }
-              }}
-            >
-              {translations?.verification?.buttons?.next || 'Avanti'}
-            </Button>
-          </Box>
+          {(showForm || isCapturingPhoto) && (
+            <Box>
+              {getCurrentContent()}
+            </Box>
+          )}
+
+          <BiometricPopup 
+            open={showBiometricPopup}
+            onClose={handleBiometricPopupClose}
+            onProceed={handleBiometricPopupProceed}
+          />
         </>
-      )}
-
-      {(showForm || isCapturingPhoto) && (
-        <Box>
-          {getCurrentContent()}
-        </Box>
       )}
     </Container>
   );

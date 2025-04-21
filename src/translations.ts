@@ -76,7 +76,12 @@ export const translations: Record<string, Translation> = {
       next: 'Avanti',
       cancel: 'Annulla',
       understand: 'Ho capito',
-      capture: 'Scatta'
+      capture: 'Scatta',
+      startRecording: 'Inizia registrazione',
+      playback: 'Rivedi il video',
+      incorrect: 'No, rifare',
+      correct: 'Sì, corretto',
+      repeat: 'Ripeti istruzione'
     },
     documents: {
       title: 'Seleziona i documenti che possiedi',
@@ -128,6 +133,20 @@ export const translations: Record<string, Translation> = {
       no: 'No',
       frontTitle: 'Foto fronte',
       backTitle: 'Foto retro'
+    },
+    biometric: {
+      startInstructions: 'Preparati per il video di verifica biometrica',
+      lookStraight: 'Guarda dritto verso la telecamera',
+      turnLeft: 'Gira lentamente la testa a sinistra e poi ritorna a fissare la telecamera',
+      turnRight: 'Gira lentamente la testa a destra e poi ritorna a fissare la telecamera',
+      liftChin: 'Alza il mento e poi torna a fissare la telecamera',
+      lowerChin: 'Abbassa il mento e poi torna a fissare la telecamera',
+      blink: 'Sbatti le palpebre',
+      smile: 'Fai un sorriso',
+      finished: 'Perfetto, abbiamo finito!',
+      verifyMovements: 'Verifica che i movimenti nel video siano corretti',
+      incorrect: 'No, devo rifare il video',
+      correct: 'Sì, i movimenti sono corretti'
     }
   },
   en: {
@@ -205,7 +224,12 @@ export const translations: Record<string, Translation> = {
       next: 'Next',
       cancel: 'Cancel',
       understand: 'I understand',
-      capture: 'Capture'
+      capture: 'Capture',
+      startRecording: 'Start recording',
+      playback: 'Review video',
+      incorrect: 'No, redo',
+      correct: 'Yes, correct',
+      repeat: 'Repeat instruction'
     },
     documents: {
       title: 'Select the documents you have',
@@ -257,6 +281,20 @@ export const translations: Record<string, Translation> = {
       no: 'No',
       frontTitle: 'Front photo',
       backTitle: 'Back photo'
+    },
+    biometric: {
+      startInstructions: 'Get ready for the biometric verification video',
+      lookStraight: 'Look straight at the camera',
+      turnLeft: 'Slowly turn your head to the left and then look back at the camera',
+      turnRight: 'Slowly turn your head to the right and then look back at the camera',
+      liftChin: 'Lift your chin and then look back at the camera',
+      lowerChin: 'Lower your chin and then look back at the camera',
+      blink: 'Blink your eyes',
+      smile: 'Make a smile',
+      finished: 'Perfect, we are done!',
+      verifyMovements: 'Verify that the movements in the video are correct',
+      incorrect: 'No, I need to redo the video',
+      correct: 'Yes, the movements are correct'
     }
   },
   bg: {
@@ -334,7 +372,12 @@ export const translations: Record<string, Translation> = {
       next: 'Напред',
       cancel: 'Отказ',
       understand: 'Разбрах',
-      capture: 'Снимай'
+      capture: 'Снимай',
+      startRecording: 'Започни запис',
+      playback: 'Преглед на видеото',
+      incorrect: 'Не, повтори',
+      correct: 'Да, правилно',
+      repeat: 'Повтори инструкцията'
     },
     documents: {
       title: 'Изберете документите, които имате',
@@ -386,6 +429,20 @@ export const translations: Record<string, Translation> = {
       no: 'Не',
       frontTitle: 'Фронтално фото',
       backTitle: 'Задно фото'
+    },
+    biometric: {
+      startInstructions: 'Подгответе се за видеото за проверка на биометрични данни',
+      lookStraight: 'Гледайте директно в камерата',
+      turnLeft: 'Наместете главата леко наляво и след това върнете обратно в камерата',
+      turnRight: 'Наместете главата леко надясно и след това върнете обратно в камерата',
+      liftChin: 'Подигнете подбодката и след това върнете обратно в камерата',
+      lowerChin: 'Намалете подбодката и след това върнете обратно в камерата',
+      blink: 'Затваряне на очите',
+      smile: 'Смеете се',
+      finished: 'Отлично, приключихме!',
+      verifyMovements: 'Проверете дали движението в видеото е правилно',
+      incorrect: 'Не, трябва да презапиша видеото',
+      correct: 'Да, движението е правилно'
     }
   }
 }; 
