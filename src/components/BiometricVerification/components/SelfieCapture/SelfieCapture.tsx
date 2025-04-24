@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Box, Button, Typography, RadioGroup, FormControlLabel, Radio, FormControl } from '@mui/material';
-import { CameraAlt as CameraIcon } from '@mui/icons-material';
+import CameraAlt from '@mui/icons-material/CameraAlt';
 
 interface SelfieCaptureProps {
   onCapture: (photoData: string) => void;
@@ -56,8 +56,6 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onCapture, onBack }) => {
       setShowLiveView(true);
       setCapturedPhoto(null);
       setQualityResponse('');
-    } else if (response === 'yes' && capturedPhoto) {
-      onCapture(capturedPhoto);
     }
   };
 
@@ -78,6 +76,12 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onCapture, onBack }) => {
     }
   };
 
+  const handleProceed = () => {
+    if (capturedPhoto) {
+      onCapture(capturedPhoto);
+    }
+  };
+
   return (
     <Box sx={{ 
       width: '100%',
@@ -86,13 +90,13 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onCapture, onBack }) => {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
-      gap: 3
+      gap: 2
     }}>
-      <Typography variant="h5" align="center">
+      <Typography variant="h5" align="center" sx={{ mb: 1 }}>
         Allontana o avvicina il cellulare per inquadrare il tuo viso all'interno della sagoma
       </Typography>
 
-      <Box sx={{ 
+      <Box sx={{
         position: 'relative',
         width: '100%',
         maxWidth: 500,
@@ -140,25 +144,29 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onCapture, onBack }) => {
             left: 0,
             right: 0,
             bottom: 0,
-            background: `
-              radial-gradient(
-                ellipse 65% 85% at 50% 45%,
-                transparent 45%,
-                rgba(0, 0, 0, 0.7) 46%
-              )
-            `,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: 2
+            justifyContent: 'center'
           }}>
+            <img 
+              src={`/icons/SelfieHead.png?v=${Date.now()}`}
+              alt="Sagoma per selfie"
+              style={{
+                width: '85%',
+                height: '85%',
+                objectFit: 'contain',
+                opacity: 0.8
+              }}
+            />
+
             <Typography
               variant="body1"
               sx={{
                 color: 'rgba(255, 255, 255, 0.7)',
                 textAlign: 'center',
-                transform: 'translateY(-20px)'
+                position: 'absolute',
+                bottom: '5%'
               }}
             >
               Guarda dritto con espressione neutra
@@ -172,49 +180,79 @@ const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onCapture, onBack }) => {
         />
       </Box>
 
-      {capturedPhoto && !showLiveView && (
-        <FormControl component="fieldset">
-          <Typography variant="body1" gutterBottom align="center">
-            La foto è a fuoco?
-          </Typography>
-          <RadioGroup
-            row
-            name="quality-response"
-            value={qualityResponse}
-            onChange={handleQualityChange}
-            sx={{ justifyContent: 'center', gap: 2 }}
-          >
-            <FormControlLabel value="yes" control={<Radio />} label="Sì" />
-            <FormControlLabel value="no" control={<Radio />} label="No" />
-          </RadioGroup>
-        </FormControl>
-      )}
-
-      <Box sx={{ 
-        display: 'flex',
-        justifyContent: 'space-between',
+      <Box sx={{
         width: '100%',
         maxWidth: 500,
-        px: 2
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 2
       }}>
-        <Button 
-          variant="outlined"
-          onClick={onBack}
-          sx={{ minWidth: 120 }}
-        >
-          Indietro
-        </Button>
-        
-        {showLiveView && (
-          <Button
-            variant="contained"
-            onClick={capturePhoto}
-            disabled={!isReady}
-            startIcon={<CameraIcon />}
+        <Box sx={{ 
+          display: 'flex',
+          justifyContent: 'space-between',
+          width: '100%',
+          px: 2
+        }}>
+          <Button 
+            variant="outlined"
+            onClick={onBack}
             sx={{ minWidth: 120 }}
           >
-            Scatta Selfie
+            Indietro
           </Button>
+          
+          {showLiveView && (
+            <Button
+              variant="contained"
+              onClick={capturePhoto}
+              disabled={!isReady}
+              startIcon={<CameraAlt />}
+              sx={{ minWidth: 120 }}
+            >
+              Scatta Selfie
+            </Button>
+          )}
+
+          {!showLiveView && qualityResponse === 'yes' && (
+            <Button
+              variant="contained"
+              onClick={handleProceed}
+              sx={{ minWidth: 120 }}
+            >
+              Avanti
+            </Button>
+          )}
+
+          {!showLiveView && qualityResponse === 'no' && (
+            <Button
+              variant="contained"
+              onClick={capturePhoto}
+              disabled={!isReady}
+              startIcon={<CameraAlt />}
+              sx={{ minWidth: 120 }}
+            >
+              Scatta di nuovo Selfie
+            </Button>
+          )}
+        </Box>
+
+        {capturedPhoto && !showLiveView && (
+          <FormControl component="fieldset" sx={{ mt: 2 }}>
+            <Typography variant="body1" gutterBottom align="center">
+              La foto è a fuoco?
+            </Typography>
+            <RadioGroup
+              row
+              name="quality-response"
+              value={qualityResponse}
+              onChange={handleQualityChange}
+              sx={{ justifyContent: 'center', gap: 2 }}
+            >
+              <FormControlLabel value="yes" control={<Radio />} label="Sì" />
+              <FormControlLabel value="no" control={<Radio />} label="No" />
+            </RadioGroup>
+          </FormControl>
         )}
       </Box>
     </Box>

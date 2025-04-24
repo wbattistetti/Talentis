@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   FileText, 
@@ -25,6 +25,22 @@ interface WelcomeProps {
 }
 
 const Welcome: React.FC<WelcomeProps> = ({ onViewChange, translations }) => {
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+
+  // Close tooltip when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (activeTooltip && !(event.target as Element).closest('.info-icon-container')) {
+        setActiveTooltip(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [activeTooltip]);
+
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -48,7 +64,14 @@ const Welcome: React.FC<WelcomeProps> = ({ onViewChange, translations }) => {
 
   const sectionStyle = "flex items-start space-x-4 mb-6";
   const textStyle = "text-gray-700";
-  const infoIconStyle = "w-5 h-5 text-gray-400 hover:text-gray-600 cursor-help";
+  const infoIconStyle = "w-5 h-5 text-gray-400 hover:text-gray-600 cursor-pointer";
+
+  const handleTooltipClick = (tooltipId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setActiveTooltip(activeTooltip === tooltipId ? null : tooltipId);
+  };
+
+  const tooltipStyle = "absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 p-2 bg-gray-800 text-white text-sm rounded shadow-lg z-50";
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -80,11 +103,16 @@ const Welcome: React.FC<WelcomeProps> = ({ onViewChange, translations }) => {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-semibold text-gray-900">{translations.welcome.interview.title}</h3>
-                  <div className="group relative">
-                    <Info className={infoIconStyle} />
-                    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 p-2 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      {translations.welcome.interview.tooltip}
-                    </div>
+                  <div className="relative info-icon-container">
+                    <Info 
+                      className={infoIconStyle} 
+                      onClick={(e) => handleTooltipClick('interview', e)}
+                    />
+                    {activeTooltip === 'interview' && (
+                      <div className={tooltipStyle}>
+                        {translations.welcome.interview.tooltip}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <p className={textStyle}>{translations.welcome.interview.description}</p>
@@ -96,11 +124,16 @@ const Welcome: React.FC<WelcomeProps> = ({ onViewChange, translations }) => {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-semibold text-gray-900">{translations.welcome.skills.title}</h3>
-                  <div className="group relative">
-                    <Info className={infoIconStyle} />
-                    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 p-2 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      {translations.welcome.skills.tooltip}
-                    </div>
+                  <div className="relative info-icon-container">
+                    <Info 
+                      className={infoIconStyle} 
+                      onClick={(e) => handleTooltipClick('skills', e)}
+                    />
+                    {activeTooltip === 'skills' && (
+                      <div className={tooltipStyle}>
+                        {translations.welcome.skills.tooltip}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <p className={textStyle}>{translations.welcome.skills.description}</p>
@@ -112,11 +145,16 @@ const Welcome: React.FC<WelcomeProps> = ({ onViewChange, translations }) => {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-semibold text-gray-900">{translations.welcome.preparation.title}</h3>
-                  <div className="group relative">
-                    <Info className={infoIconStyle} />
-                    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 p-2 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      {translations.welcome.preparation.tooltip}
-                    </div>
+                  <div className="relative info-icon-container">
+                    <Info 
+                      className={infoIconStyle} 
+                      onClick={(e) => handleTooltipClick('preparation', e)}
+                    />
+                    {activeTooltip === 'preparation' && (
+                      <div className={tooltipStyle}>
+                        {translations.welcome.preparation.tooltip}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <p className={textStyle}>{translations.welcome.preparation.description}</p>
@@ -128,11 +166,16 @@ const Welcome: React.FC<WelcomeProps> = ({ onViewChange, translations }) => {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-semibold text-gray-900">{translations.welcome.companies.title}</h3>
-                  <div className="group relative">
-                    <Info className={infoIconStyle} />
-                    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 p-2 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      {translations.welcome.companies.tooltip}
-                    </div>
+                  <div className="relative info-icon-container">
+                    <Info 
+                      className={infoIconStyle} 
+                      onClick={(e) => handleTooltipClick('companies', e)}
+                    />
+                    {activeTooltip === 'companies' && (
+                      <div className={tooltipStyle}>
+                        {translations.welcome.companies.tooltip}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <p className={textStyle}>{translations.welcome.companies.description}</p>
@@ -170,11 +213,16 @@ const Welcome: React.FC<WelcomeProps> = ({ onViewChange, translations }) => {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="text-lg font-semibold text-gray-900">{translations.welcome.abroad.documentation.title}</h3>
-                    <div className="group relative">
-                      <Info className={infoIconStyle} />
-                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 p-2 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        {translations.welcome.abroad.documentation.tooltip}
-                      </div>
+                    <div className="relative info-icon-container">
+                      <Info 
+                        className={infoIconStyle} 
+                        onClick={(e) => handleTooltipClick('documentation', e)}
+                      />
+                      {activeTooltip === 'documentation' && (
+                        <div className={tooltipStyle}>
+                          {translations.welcome.abroad.documentation.tooltip}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <p className={textStyle}>{translations.welcome.abroad.documentation.description}</p>
@@ -186,11 +234,16 @@ const Welcome: React.FC<WelcomeProps> = ({ onViewChange, translations }) => {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="text-lg font-semibold text-gray-900">{translations.welcome.abroad.travel.title}</h3>
-                    <div className="group relative">
-                      <Info className={infoIconStyle} />
-                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 p-2 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        {translations.welcome.abroad.travel.tooltip}
-                      </div>
+                    <div className="relative info-icon-container">
+                      <Info 
+                        className={infoIconStyle} 
+                        onClick={(e) => handleTooltipClick('travel', e)}
+                      />
+                      {activeTooltip === 'travel' && (
+                        <div className={tooltipStyle}>
+                          {translations.welcome.abroad.travel.tooltip}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <p className={textStyle}>{translations.welcome.abroad.travel.description}</p>
@@ -202,11 +255,16 @@ const Welcome: React.FC<WelcomeProps> = ({ onViewChange, translations }) => {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="text-lg font-semibold text-gray-900">{translations.welcome.abroad.culture.title}</h3>
-                    <div className="group relative">
-                      <Info className={infoIconStyle} />
-                      <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 p-2 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        {translations.welcome.abroad.culture.tooltip}
-                      </div>
+                    <div className="relative info-icon-container">
+                      <Info 
+                        className={infoIconStyle} 
+                        onClick={(e) => handleTooltipClick('culture', e)}
+                      />
+                      {activeTooltip === 'culture' && (
+                        <div className={tooltipStyle}>
+                          {translations.welcome.abroad.culture.tooltip}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <p className={textStyle}>{translations.welcome.abroad.culture.description}</p>

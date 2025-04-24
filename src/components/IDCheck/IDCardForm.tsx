@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import { Box, TextField, Typography, Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, TextField, Typography, Button, Tooltip } from '@mui/material';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 interface IDCardFormProps {
   onDataChange: (data: any) => void;
@@ -14,16 +15,103 @@ interface IDCardFormProps {
   };
 }
 
+interface ValidationErrors {
+  dataNascita?: string;
+  dataScadenza?: string;
+}
+
 export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, onNext, personalData }) => {
+  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [isFormValid, setIsFormValid] = useState(false);
+
   useEffect(() => {
     if (personalData) {
       onDataChange(personalData);
+      validateForm(personalData);
     }
   }, [personalData]);
 
-  const handleInputChange = (field: string, value: string) => {
-    onDataChange({ [field]: value });
+  const validateDate = (date: string, field: 'dataNascita' | 'dataScadenza'): string | undefined => {
+    if (!date) return undefined;
+    
+    const inputDate = new Date(date);
+    const today = new Date();
+    
+    if (field === 'dataNascita') {
+      if (inputDate > today) {
+        return 'La data di nascita deve essere nel passato';
+      }
+    } else if (field === 'dataScadenza') {
+      if (inputDate < today) {
+        return 'La data di scadenza deve essere nel futuro';
+      }
+    }
+    return undefined;
   };
+
+  const validateForm = (data: any) => {
+    const newErrors: ValidationErrors = {};
+    
+    // Validazione date
+    const birthDateError = validateDate(data?.dataNascita, 'dataNascita');
+    const expiryDateError = validateDate(data?.dataScadenza, 'dataScadenza');
+    
+    if (birthDateError) newErrors.dataNascita = birthDateError;
+    if (expiryDateError) newErrors.dataScadenza = expiryDateError;
+    
+    setErrors(newErrors);
+
+    // Verifica se tutti i campi sono compilati e non sono stringhe vuote
+    const isValid = !!(
+      data?.nome?.trim() &&
+      data?.cognome?.trim() &&
+      data?.dataNascita?.trim() &&
+      data?.numeroDocumento?.trim() &&
+      data?.dataScadenza?.trim() &&
+      Object.keys(newErrors).length === 0
+    );
+
+    setIsFormValid(isValid);
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    const newData = {
+      ...personalData,
+      [field]: value
+    };
+    onDataChange(newData);
+    validateForm(newData);
+  };
+
+  const renderDateField = (
+    field: 'dataNascita' | 'dataScadenza',
+    label: string,
+    value: string | undefined
+  ) => (
+    <Box sx={{ position: 'relative' }}>
+      <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
+        {label}
+      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <TextField
+          size="small"
+          type="date"
+          variant="outlined"
+          value={value || ''}
+          onChange={(e) => handleInputChange(field, e.target.value)}
+          error={!!errors[field]}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        {errors[field] && (
+          <Tooltip title={errors[field]} placement="top" arrow>
+            <ErrorOutlineIcon color="error" />
+          </Tooltip>
+        )}
+      </Box>
+    </Box>
+  );
 
   return (
     <Box sx={{
@@ -46,7 +134,7 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
           alt="Carta d'identità"
           style={{ width: '96px', height: '96px' }}
         />
-        <Typography variant="h5" color="error">
+        <Typography variant="h5" color="primary">
           Inserisci i dati della carta d'identità
         </Typography>
       </Box>
@@ -88,18 +176,7 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
             />
           </Box>
 
-          <Box sx={{ position: 'relative' }}>
-            <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-              Data di nascita
-            </Typography>
-            <TextField
-              size="small"
-              placeholder="gg/mm/aaaa"
-              variant="outlined"
-              value={personalData?.dataNascita || ''}
-              onChange={(e) => handleInputChange('dataNascita', e.target.value)}
-            />
-          </Box>
+          {renderDateField('dataNascita', 'Data di nascita', personalData?.dataNascita)}
         </Box>
 
         <Box sx={{ 
@@ -122,25 +199,14 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
             />
           </Box>
 
-          <Box>
-            <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-              Data di scadenza
-            </Typography>
-            <TextField
-              size="small"
-              placeholder="gg/mm/aaaa"
-              variant="outlined"
-              value={personalData?.dataScadenza || ''}
-              onChange={(e) => handleInputChange('dataScadenza', e.target.value)}
-            />
-          </Box>
+          {renderDateField('dataScadenza', 'Data di scadenza', personalData?.dataScadenza)}
         </Box>
 
         <Box sx={{ 
           position: 'relative',
           mt: 4,
           display: 'flex',
-          justifyContent: 'flex-start',
+          justifyContent: 'space-between',
           alignItems: 'center',
           width: '100%'
         }}>
@@ -154,26 +220,22 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
           >
             INDIETRO
           </Button>
-          <Box sx={{ 
-            position: 'absolute',
-            left: '484px'
-          }}>
-            <Button 
-              variant="contained" 
-              onClick={onNext}
-              sx={{ 
-                backgroundColor: '#1976d2',
-                '&:hover': {
-                  backgroundColor: '#1565c0'
-                },
-                fontSize: '0.875rem',
-                py: 1,
-                width: '220px'
-              }}
-            >
-              AVANTI
-            </Button>
-          </Box>
+          <Button 
+            variant="contained" 
+            onClick={onNext}
+            disabled={!isFormValid}
+            sx={{ 
+              backgroundColor: '#1976d2',
+              '&:hover': {
+                backgroundColor: '#1565c0'
+              },
+              fontSize: '0.875rem',
+              py: 1,
+              width: '220px'
+            }}
+          >
+            AVANTI
+          </Button>
         </Box>
       </Box>
     </Box>

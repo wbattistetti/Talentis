@@ -13,50 +13,22 @@ interface SelfieVideoProps {
 const VideoContainer = styled(Box)({
   position: 'relative',
   width: '100%',
-  height: '100vh',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
+  maxWidth: 500,
+  aspectRatio: '4/5',
+  overflow: 'hidden',
+  borderRadius: 8,
   backgroundColor: '#000',
+  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
 });
 
 const Video = styled('video')({
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-});
-
-const Overlay = styled(Box)({
   position: 'absolute',
   top: 0,
   left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: 'rgba(0, 0, 0, 0.7)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-});
-
-const OvalMask = styled(Box)({
-  width: '280px',
-  height: '380px',
-  borderRadius: '140px / 190px',
-  border: '3px solid white',
-  boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 255, 255, 0.5)',
-  position: 'relative',
-  '&::after': {
-    content: '""',
-    position: 'absolute',
-    top: '-10px',
-    left: '-10px',
-    right: '-10px',
-    bottom: '-10px',
-    border: '2px dashed rgba(255, 255, 255, 0.5)',
-    borderRadius: '150px / 200px',
-    pointerEvents: 'none'
-  }
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  transform: 'scaleX(-1)'
 });
 
 const Controls = styled(Box)(({ theme }) => ({
@@ -78,7 +50,7 @@ const Instructions = styled(Typography)({
   padding: '0 20px',
   textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
   zIndex: 2,
-  fontSize: '1.5rem',
+  fontSize: '1.2rem',
   fontWeight: 'bold'
 });
 
@@ -316,81 +288,167 @@ const SelfieVideo: React.FC<SelfieVideoProps> = ({
   };
 
   return (
-    <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+    <Box sx={{ 
+      width: '100%',
+      maxWidth: 800,
+      mx: 'auto',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 2
+    }}>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 1,
+        mb: 2
+      }}>
+        <Typography 
+          sx={{ 
+            textAlign: 'center',
+            fontSize: '1rem',
+            lineHeight: 1.5,
+            color: 'text.primary'
+          }}
+        >
+          Adesso dovrai fare un breve video di circa 15 secondi. Sentirai dei messaggi e
+        </Typography>
+        <Typography 
+          sx={{ 
+            textAlign: 'center',
+            fontSize: '1rem',
+            lineHeight: 1.5,
+            color: 'text.primary'
+          }}
+        >
+          dovrai semplicememte seguire le istruzioni.
+        </Typography>
+        <Typography 
+          sx={{ 
+            textAlign: 'center',
+            fontSize: '1rem',
+            lineHeight: 1.5,
+            color: 'text.primary',
+            mt: 1
+          }}
+        >
+          Premi Start per partire. Stop e Restart, se occorre.
+        </Typography>
+      </Box>
+
       <VideoContainer>
         <Video ref={videoRef} autoPlay playsInline muted />
-        <OvalMask />
+        
+        <Box sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <img 
+            src={`/icons/SelfieHead.png?v=${Date.now()}`}
+            alt="Sagoma per selfie"
+            style={{
+              width: '85%',
+              height: '85%',
+              objectFit: 'contain',
+              opacity: 0.8
+            }}
+          />
+        </Box>
+
         <Instructions>
-          <Typography variant="h6" color="white">
-            {t(steps[currentStep])}
-          </Typography>
+          {t(steps[currentStep])}
         </Instructions>
-        <Controls>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleBack}
-            sx={{ minWidth: '120px' }}
-          >
-            {t('buttons.back')}
-          </Button>
-          {isRecording ? (
+
+        {showVerification && (
+          <Box sx={{ 
+            position: 'absolute',
+            bottom: '100px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            gap: 2,
+            zIndex: 3
+          }}>
             <Button
               variant="contained"
-              color="primary"
-              onClick={stopRecording}
-              sx={{ minWidth: '120px' }}
+              color="error"
+              onClick={() => handleVerification(false)}
             >
-              {t('buttons.stop')}
+              {t('buttons.incorrect')}
             </Button>
-          ) : (
             <Button
               variant="contained"
-              color="primary"
-              onClick={startRecording}
-              sx={{ minWidth: '120px' }}
-              disabled={isPlayingBack}
+              color="success"
+              onClick={() => handleVerification(true)}
             >
-              {t('buttons.start')}
+              {t('buttons.correct')}
             </Button>
-          )}
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleRestart}
-            sx={{ minWidth: '120px' }}
-          >
-            {t('buttons.restart')}
-          </Button>
-        </Controls>
+          </Box>
+        )}
       </VideoContainer>
 
-      {recordedVideo && !isPlayingBack && (
-        <Box sx={{ 
-          position: 'absolute',
-          bottom: '100px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          gap: 2,
-          zIndex: 3
-        }}>
+      <Box sx={{
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        mt: 2,
+        px: 2
+      }}>
+        <Button
+          variant="contained"
+          onClick={handleBack}
+          sx={{ 
+            minWidth: '120px',
+            backgroundColor: '#9e9e9e',
+            '&:hover': {
+              backgroundColor: '#757575'
+            },
+            textTransform: 'uppercase'
+          }}
+        >
+          Indietro
+        </Button>
+        {isRecording ? (
           <Button
             variant="contained"
-            color="error"
-            onClick={() => handleVerification(false)}
+            onClick={stopRecording}
+            sx={{ 
+              minWidth: '120px',
+              backgroundColor: '#d32f2f',
+              '&:hover': {
+                backgroundColor: '#c62828'
+              },
+              textTransform: 'uppercase'
+            }}
           >
-            {t('buttons.incorrect')}
+            Stop
           </Button>
+        ) : (
           <Button
             variant="contained"
-            color="success"
-            onClick={() => handleVerification(true)}
+            onClick={startRecording}
+            sx={{ 
+              minWidth: '120px',
+              backgroundColor: recordedVideo ? '#f57c00' : '#2e7d32',
+              '&:hover': {
+                backgroundColor: recordedVideo ? '#ef6c00' : '#1b5e20'
+              },
+              textTransform: 'uppercase'
+            }}
+            disabled={isPlayingBack}
           >
-            {t('buttons.correct')}
+            {recordedVideo ? 'Restart' : 'Start'}
           </Button>
-        </Box>
-      )}
+        )}
+      </Box>
     </Box>
   );
 };

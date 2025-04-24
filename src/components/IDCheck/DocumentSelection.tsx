@@ -279,19 +279,19 @@ export const DocumentSelection = ({ onCancel, translations, onComplete }: Docume
   const documents = [
     {
       type: 'idCard' as DocumentType,
-      icon: <IdCardIcon sx={{ color: '#4CAF50', fontSize: 64 }} />,
+      icon: <Box component="img" src="/icons/IdCard.png" alt="Carta d'identità" sx={{ width: 64, height: 64 }} />,
       title: translations?.documents?.idCard || 'Carta d\'identità',
       description: 'Documento di identità nazionale'
     },
     {
       type: 'passport' as DocumentType,
-      icon: <PassportIcon sx={{ color: '#2196F3', fontSize: 64 }} />,
+      icon: <Box component="img" src="/icons/Passport.png" alt="Passaporto" sx={{ width: 64, height: 64 }} />,
       title: translations?.documents?.passport || 'Passaporto',
       description: 'Documento per viaggi internazionali'
     },
     {
       type: 'driversLicense' as DocumentType,
-      icon: <DriversLicenseIcon sx={{ color: '#9C27B0', fontSize: 64 }} />,
+      icon: <Box component="img" src="/icons/DriverLicense.png" alt="Patente di guida" sx={{ width: 64, height: 64 }} />,
       title: translations?.documents?.driverLicense || 'Patente di guida',
       description: 'Documento di guida e identità'
     }
