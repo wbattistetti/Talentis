@@ -17,6 +17,7 @@ import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ShieldIcon from '@mui/icons-material/Shield';
+import { useTranslation } from 'react-i18next';
 
 interface BiometricPopupProps {
   open: boolean;
@@ -29,6 +30,8 @@ const BiometricPopup: React.FC<BiometricPopupProps> = ({
   onClose,
   onProceed
 }) => {
+  const { t } = useTranslation();
+
   return (
     <Dialog
       open={open}
@@ -62,14 +65,14 @@ const BiometricPopup: React.FC<BiometricPopupProps> = ({
           />
         </Box>
         <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Verifica Biometrica
+          {t('biometric.popup.title')}
         </Typography>
       </DialogTitle>
       
       <DialogContent>
         <Box sx={{ py: 2 }}>
           <Typography paragraph sx={{ fontSize: '1.1rem', mb: 3 }}>
-            Ottimo! Ora che abbiamo acquisito le foto dei tuoi documenti, devo chiederti di fare:
+            {t('biometric.popup.description')}
           </Typography>
           
           <List sx={{ py: 0 }}>
@@ -78,7 +81,7 @@ const BiometricPopup: React.FC<BiometricPopupProps> = ({
                 <CameraAltIcon sx={{ fontSize: 32, color: 'primary.main' }} />
               </ListItemIcon>
               <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
-                Un selfie
+                {t('biometric.popup.selfie')}
               </Typography>
             </ListItem>
             <ListItem sx={{ py: 1 }}>
@@ -86,13 +89,13 @@ const BiometricPopup: React.FC<BiometricPopupProps> = ({
                 <VideocamIcon sx={{ fontSize: 32, color: 'primary.main' }} />
               </ListItemIcon>
               <Typography variant="body1" sx={{ fontSize: '1.1rem' }}>
-                Un breve video
+                {t('biometric.popup.video')}
               </Typography>
             </ListItem>
           </List>
 
           <Typography paragraph sx={{ mt: 3, fontSize: '1.1rem' }}>
-            Questi dati mi serviranno per verificare la corrispondenza con documenti e per riconoscerti se dovrai fare degli esercizi pratici da includere nel curriculum.
+            {t('biometric.popup.explanation')}
           </Typography>
         </Box>
       </DialogContent>
@@ -107,7 +110,7 @@ const BiometricPopup: React.FC<BiometricPopupProps> = ({
             py: 1
           }}
         >
-          Indietro
+          {t('common.back')}
         </Button>
         <Button 
           onClick={onProceed} 
@@ -119,7 +122,7 @@ const BiometricPopup: React.FC<BiometricPopupProps> = ({
             py: 1
           }}
         >
-          Procedi
+          {t('common.proceed')}
         </Button>
       </DialogActions>
     </Dialog>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, TextField, Typography, Button, Tooltip } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { useTranslation } from 'react-i18next';
 
 interface IDCardFormProps {
   onDataChange: (data: any) => void;
@@ -16,11 +17,11 @@ interface IDCardFormProps {
 }
 
 interface ValidationErrors {
-  dataNascita?: string;
-  dataScadenza?: string;
+  [key: string]: string | undefined;
 }
 
 export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, onNext, personalData }) => {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -39,11 +40,11 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
     
     if (field === 'dataNascita') {
       if (inputDate > today) {
-        return 'La data di nascita deve essere nel passato';
+        return t('idCardForm.errors.dataNascita');
       }
     } else if (field === 'dataScadenza') {
       if (inputDate < today) {
-        return 'La data di scadenza deve essere nel futuro';
+        return t('idCardForm.errors.dataScadenza');
       }
     }
     return undefined;
@@ -135,7 +136,7 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
           style={{ width: '96px', height: '96px' }}
         />
         <Typography variant="h5" color="primary">
-          Inserisci i dati della carta d'identità
+          {t('idCardForm.title')}
         </Typography>
       </Box>
 
@@ -154,7 +155,7 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
         }}>
           <Box>
             <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-              Nome
+              {t('idCardForm.fields.nome')}
             </Typography>
             <TextField
               size="small"
@@ -166,7 +167,7 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
 
           <Box>
             <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-              Cognome
+              {t('idCardForm.fields.cognome')}
             </Typography>
             <TextField
               size="small"
@@ -176,7 +177,7 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
             />
           </Box>
 
-          {renderDateField('dataNascita', 'Data di nascita', personalData?.dataNascita)}
+          {renderDateField('dataNascita', t('idCardForm.fields.dataNascita'), personalData?.dataNascita)}
         </Box>
 
         <Box sx={{ 
@@ -189,7 +190,7 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
         }}>
           <Box>
             <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-              Numero carta d'identità
+              {t('idCardForm.fields.numeroDocumento')}
             </Typography>
             <TextField
               size="small"
@@ -199,7 +200,7 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
             />
           </Box>
 
-          {renderDateField('dataScadenza', 'Data di scadenza', personalData?.dataScadenza)}
+          {renderDateField('dataScadenza', t('idCardForm.fields.dataScadenza'), personalData?.dataScadenza)}
         </Box>
 
         <Box sx={{ 
@@ -218,7 +219,7 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
               fontSize: '0.875rem'
             }}
           >
-            INDIETRO
+            {t('idCardForm.buttons.back')}
           </Button>
           <Button 
             variant="contained" 
@@ -234,7 +235,7 @@ export const IDCardForm: React.FC<IDCardFormProps> = ({ onDataChange, onBack, on
               width: '220px'
             }}
           >
-            AVANTI
+            {t('idCardForm.buttons.next')}
           </Button>
         </Box>
       </Box>

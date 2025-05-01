@@ -1,0 +1,13 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+ Regola globale per Cursor:
+
+Tutte le nuove pagine devono essere sviluppate **con supporto i18n attivo che gia è utilizzato e con il file centralizzato di traduzioni Translations.ts**:
+- **Nessun testo hardcoded** (es. titoli, etichette, placeholder, messaggi)
+- Ogni stringa testuale deve essere gestita tramite sistema di localizzazione (es. `t('chiave')`)
+- Supporta da subito le lingue: 🇮🇹 Italiano, 🇬🇧 Inglese, 🇧🇬 Bulgaro
+- Utilizza file JSON di traduzione o librerie come `react-i18next`
+

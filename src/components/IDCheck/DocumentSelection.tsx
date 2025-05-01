@@ -18,10 +18,10 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import { CreditCard as IdCardIcon, DriveEta as DriversLicenseIcon, Assignment as PassportIcon } from '@mui/icons-material';
 import BiometricPopup from '../BiometricVerification/BiometricPopup';
 import { BiometricVerification } from '../BiometricVerification/BiometricVerification';
+import { useTranslation } from 'react-i18next';
 
 interface DocumentSelectionProps {
   onCancel: () => void;
-  translations: any;
   onComplete: (data: DocumentsData) => void;
 }
 
@@ -47,7 +47,8 @@ type DocumentsData = {
 
 type DocumentType = 'idCard' | 'passport' | 'driversLicense';
 
-export const DocumentSelection = ({ onCancel, translations, onComplete }: DocumentSelectionProps) => {
+export const DocumentSelection = ({ onCancel, onComplete }: DocumentSelectionProps) => {
+  const { t } = useTranslation();
   const [selectedDocuments, setSelectedDocuments] = React.useState<string[]>([]);
   const [showForm, setShowForm] = React.useState(false);
   const [currentFormIndex, setCurrentFormIndex] = React.useState(0);
@@ -67,7 +68,7 @@ export const DocumentSelection = ({ onCancel, translations, onComplete }: Docume
     showWelcomeDialog,
     showForm,
     selectedDocuments,
-    translations: !!translations
+    translations: !!t
   });
 
   const handleDocumentSelect = (documentType: DocumentType) => {
@@ -186,17 +187,17 @@ export const DocumentSelection = ({ onCancel, translations, onComplete }: Docume
   };
 
   const getNextButtonText = () => {
-    return translations.verification.buttons.next;
+    return t('documents.buttons.next');
   };
 
   const getDocumentTitle = (documentType: string) => {
     switch (documentType) {
       case 'id':
-        return translations.verification.documents.idCard;
+        return t('documents.idCard');
       case 'passport':
-        return translations.verification.documents.passport;
+        return t('documents.passport');
       case 'driverLicense':
-        return translations.verification.documents.driverLicense;
+        return t('documents.driverLicense');
       default:
         return '';
     }
@@ -279,21 +280,21 @@ export const DocumentSelection = ({ onCancel, translations, onComplete }: Docume
   const documents = [
     {
       type: 'idCard' as DocumentType,
-      icon: <Box component="img" src="/icons/IdCard.png" alt="Carta d'identità" sx={{ width: 64, height: 64 }} />,
-      title: translations?.documents?.idCard || 'Carta d\'identità',
-      description: 'Documento di identità nazionale'
+      icon: <Box component="img" src="/icons/IdCard.png" alt={t('documents.idCard')} sx={{ width: 64, height: 64 }} />,
+      title: t('documents.idCard'),
+      description: t('documents.descriptions.idCard')
     },
     {
       type: 'passport' as DocumentType,
-      icon: <Box component="img" src="/icons/Passport.png" alt="Passaporto" sx={{ width: 64, height: 64 }} />,
-      title: translations?.documents?.passport || 'Passaporto',
-      description: 'Documento per viaggi internazionali'
+      icon: <Box component="img" src="/icons/Passport.png" alt={t('documents.passport')} sx={{ width: 64, height: 64 }} />,
+      title: t('documents.passport'),
+      description: t('documents.descriptions.passport')
     },
     {
       type: 'driversLicense' as DocumentType,
-      icon: <Box component="img" src="/icons/DriverLicense.png" alt="Patente di guida" sx={{ width: 64, height: 64 }} />,
-      title: translations?.documents?.driverLicense || 'Patente di guida',
-      description: 'Documento di guida e identità'
+      icon: <Box component="img" src="/icons/DriverLicense.png" alt={t('documents.driverLicense')} sx={{ width: 64, height: 64 }} />,
+      title: t('documents.driverLicense'),
+      description: t('documents.descriptions.driverLicense')
     }
   ];
 
@@ -312,7 +313,6 @@ export const DocumentSelection = ({ onCancel, translations, onComplete }: Docume
               console.log('Dialog closing');
               setShowWelcomeDialog(false);
             }}
-            translations={translations}
           />
 
           {!showWelcomeDialog && !showForm && (
@@ -325,9 +325,9 @@ export const DocumentSelection = ({ onCancel, translations, onComplete }: Docume
                   alignItems: 'center',
                   gap: 1
                 }}>
-                  {translations?.documents?.title || 'Seleziona i documenti che possiedi'}
+                  {t('documents.selectTitle')}
                   <Tooltip 
-                    title={translations?.documents?.tooltip || 'Puoi selezionare più documenti da verificare'}
+                    title={t('documents.tooltip')}
                     arrow
                     placement="right"
                   >
@@ -407,7 +407,7 @@ export const DocumentSelection = ({ onCancel, translations, onComplete }: Docume
 
               <Box sx={{ 
                 display: 'flex', 
-                justifyContent: 'space-between',
+                justifyContent: 'flex-end',
                 mt: 4
               }}>
                 <Button 
@@ -420,7 +420,7 @@ export const DocumentSelection = ({ onCancel, translations, onComplete }: Docume
                     }
                   }}
                 >
-                  {translations?.verification?.buttons?.back || 'Indietro'}
+                  {t('documents.buttons.back')}
                 </Button>
                 <Button 
                   variant="contained"
@@ -434,7 +434,7 @@ export const DocumentSelection = ({ onCancel, translations, onComplete }: Docume
                     }
                   }}
                 >
-                  {translations?.verification?.buttons?.next || 'Avanti'}
+                  {t('documents.buttons.next')}
                 </Button>
               </Box>
             </>

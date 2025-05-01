@@ -345,48 +345,49 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
 
         <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
           {/* Pulsanti principali */}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Button 
               variant="outlined" 
               onClick={onBack}
               sx={{ minWidth: 120 }}
             >
-              {t('buttons.back')}
+              {t('documents.buttons.back')}
             </Button>
-            
-            {/* Mostra "Scatta" se non c'è ancora una foto */}
-            {!capturedPhoto && (
-              <Button 
-                variant="contained"
-                onClick={capturePhoto}
-                sx={{ minWidth: 120 }}
-              >
-                {t('buttons.capture')}
-              </Button>
-            )}
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              {/* Mostra "Scatta" se non c'è ancora una foto */}
+              {!capturedPhoto && (
+                <Button 
+                  variant="contained"
+                  onClick={capturePhoto}
+                  sx={{ minWidth: 120 }}
+                >
+                  {t('documents.buttons.capture')}
+                </Button>
+              )}
 
-            {/* Mostra "Avanti" se la foto è stata verificata (qualityResponse === 'yes') */}
-            {capturedPhoto && qualityResponse === 'yes' && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => onPhotoCapture(capturedPhoto)}
-                sx={{ minWidth: 120 }}
-              >
-                {t('buttons.next')}
-              </Button>
-            )}
+              {/* Mostra "Avanti" se la foto è stata verificata (qualityResponse === 'yes') */}
+              {capturedPhoto && qualityResponse === 'yes' && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => onPhotoCapture(capturedPhoto)}
+                  sx={{ minWidth: 120 }}
+                >
+                  {t('documents.buttons.next')}
+                </Button>
+              )}
 
-            {/* Mostra "Scatta di nuovo" se la foto è stata rifiutata (qualityResponse === 'no') */}
-            {capturedPhoto && qualityResponse === 'no' && (
-              <Button 
-                variant="contained"
-                onClick={capturePhoto}
-                sx={{ minWidth: 120 }}
-              >
-                {t('buttons.capture')}
-              </Button>
-            )}
+              {/* Mostra "Scatta di nuovo" se la foto è stata rifiutata (qualityResponse === 'no') */}
+              {capturedPhoto && qualityResponse === 'no' && (
+                <Button 
+                  variant="contained"
+                  onClick={capturePhoto}
+                  sx={{ minWidth: 120 }}
+                >
+                  {t('documents.buttons.capture')}
+                </Button>
+              )}
+            </Box>
           </Box>
 
           {/* Domanda sulla qualità della foto - sempre visibile dopo il primo scatto */}
@@ -402,7 +403,7 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
                 fontSize: '0.9rem',
                 textAlign: 'center'
               }}>
-                La foto è a fuoco e ben visibile?
+                {t('photoCapture.qualityQuestion')}
               </Typography>
 
               <FormControl>
@@ -421,12 +422,12 @@ const PhotoCapture: React.FC<PhotoCaptureProps> = ({
                   <FormControlLabel 
                     value="yes" 
                     control={<Radio size="small" />} 
-                    label="Sì" 
+                    label={t('photoCapture.yes')} 
                   />
                   <FormControlLabel 
                     value="no" 
                     control={<Radio size="small" />} 
-                    label="No" 
+                    label={t('photoCapture.no')} 
                   />
                 </RadioGroup>
               </FormControl>

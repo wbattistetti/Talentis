@@ -41,7 +41,6 @@ import Navigation from './components/Navigation';
 import { SupportedLanguage, TeamMember, Translation } from './types';
 import { translations } from './translations';
 import { DocumentSelection } from './components/IDCheck/DocumentSelection';
-import { LanguageProvider } from './contexts/LanguageContext';
 import i18n from './i18n';
 
 const teamMembers = {
@@ -308,7 +307,7 @@ function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
-  const [showSplash, setShowSplash] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const [showWelcome, setShowWelcome] = useState(false);
   const [showLanguageSelector, setShowLanguageSelector] = useState(true);
 
@@ -414,7 +413,8 @@ function App() {
       setSelectedLanguage(language);
       setShowLanguageSelector(false);
       i18n.changeLanguage(language);
-      setShowWelcome(true);
+      setShowSplash(true);
+      setShowWelcome(false);
     }
   };
 
@@ -433,7 +433,8 @@ function App() {
 
   const handleSplashContinue = () => {
     setShowSplash(false);
-    setShowWelcome(true);
+    setShowWelcome(false);
+    setShowLanguageSelector(true);
   };
 
   const handleViewChange = (view: ViewType) => {
@@ -444,21 +445,19 @@ function App() {
   };
 
   const renderContent = () => {
-    if (!selectedLanguage) {
+    if (!selectedLanguage || showLanguageSelector) {
       return <LanguageSelection onLanguageSelect={handleLanguageSelect} />;
     }
-
     if (showSplash) {
       return <Splash 
-        onContinue={handleSplashContinue} 
-        translations={translations[selectedLanguage as SupportedLanguage]} 
+        onContinue={() => { setShowSplash(false); setShowWelcome(true); }}
+        translations={translations[selectedLanguage || 'it']}
       />;
     }
 
     if (currentView === 'document') {
       return <DocumentSelection 
         onCancel={() => setCurrentView('team')} 
-        translations={translations[selectedLanguage]}
         onComplete={(data) => {
           console.log('Document verification completed:', data);
           setCurrentView('team');
@@ -495,19 +494,17 @@ function App() {
   };
 
   return (
-    <LanguageProvider>
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-        {selectedLanguage && !showSplash && !showWelcome && (
-          <Navigation
-            currentView={currentView}
-            onViewChange={handleViewChange}
-            selectedLanguage={selectedLanguage}
-            translations={translations[selectedLanguage]}
-          />
-        )}
-        {renderContent()}
-      </div>
-    </LanguageProvider>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      {selectedLanguage && !showSplash && !showWelcome && (
+        <Navigation
+          currentView={currentView}
+          onViewChange={handleViewChange}
+          selectedLanguage={selectedLanguage}
+          translations={translations[selectedLanguage]}
+        />
+      )}
+      {renderContent()}
+    </div>
   );
 }
 
