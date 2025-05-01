@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInDelay {
+  0%, 30% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes fadeInLong {
+  0%, 60% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes softGlow {
+  0%, 100% { text-shadow: 0 0 8px rgba(165, 243, 252, 0.4); }
+  50% { text-shadow: 0 0 12px rgba(165, 243, 252, 0.6); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1s ease forwards;
+}
+
+.animate-fadeInDelay {
+  animation: fadeInDelay 1.5s ease forwards;
+}
+
+.animate-fadeInLong {
+  animation: fadeInLong 2s ease forwards;
+}
+
+.keyword-highlight {
+  color: #a5f3fc;
+  font-weight: bold;
+  display: inline-block;
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards, softGlow 3s ease-in-out infinite;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  @apply antialiased;
+}
+
+/* Custom cursor for elements with click handlers */
+[role="button"], 
+button, 
+a {
+  cursor: pointer;
+}

@@ -1,0 +1,311 @@
+{
+  "splash": {
+    "title": "AI Jobs",
+    "subtitle": "Revolutionizing job search with Artificial Intelligence",
+    "vision": "OUR VISION"
+  },
+  "vision": {
+    "title": "Our Vision",
+    "subtitle": "We want to revolutionize the way people find jobs thanks to Artificial Intelligence",
+    "steps": [
+      {
+        "title": "The Challenge of Change",
+        "description": "The advent of Artificial Intelligence is causing a transformation in the job market with unprecedented speed.",
+        "keywords": ["Artificial Intelligence", "transformation", "unprecedented"]
+      },
+      {
+        "title": "Our Response",
+        "description": "We want to use AI to govern this change and bring the world of recruitment up to the challenges of today.",
+        "keywords": ["AI", "govern", "challenges"]
+      },
+      {
+        "title": "The Social Importance",
+        "description": "In a context of increasingly massive migration flows, this has become an ethical, social and political issue of primary importance.",
+        "keywords": ["ethical", "social", "political"]
+      },
+      {
+        "title": "The Integrated Solution",
+        "description": "An ecosystem capable of governing the meeting between job supply and demand in a much more integrated way than classic portals and able to cover 'end-to-end' all the needs of companies and workers.",
+        "keywords": ["ecosystem", "integrated", "end-to-end"]
+      }
+    ],
+    "next": "PROBLEMS"
+  },
+  "problems": {
+    "title": "The Problems",
+    "subtitle": "The challenges we face in the European job market",
+    "steps": [
+      {
+        "title": "Labor Shortage",
+        "description": "Labor shortage in European strategic sectors (healthcare, construction, IT).",
+        "keywords": ["strategic sectors", "healthcare", "construction", "IT"]
+      },
+      {
+        "title": "Training Mismatch",
+        "description": "Mismatch between training and labor market needs.",
+        "keywords": ["mismatch", "training", "needs"]
+      },
+      {
+        "title": "Migration Flows",
+        "description": "380,000 irregular crossings registered in the EU in 2023.",
+        "keywords": ["irregular crossings", "EU", "2023"]
+      },
+      {
+        "title": "Border Management",
+        "description": "Difficulties in managing and identifying migrants at borders.",
+        "keywords": ["management", "identification", "borders"]
+      },
+      {
+        "title": "Integrated Policies",
+        "description": "Need for integrated European policies on work, training and migration.",
+        "keywords": ["European policies", "integrated", "training"]
+      }
+    ],
+    "next": "WHAT WE OFFER"
+  },
+  "companies": {
+    "title": "What We Offer to Companies",
+    "subtitle": "Innovative solutions for personnel management",
+    "steps": [
+      {
+        "title": "Access to Verified Talent",
+        "description": "Database of qualified and certified professionals, ready to be quickly integrated into the company.",
+        "keywords": ["qualified professionals", "certified", "database"]
+      },
+      {
+        "title": "Precision Matching",
+        "description": "Artificial Intelligence analyzes company needs and finds the most suitable profiles, reducing selection time and costs.",
+        "keywords": ["Artificial Intelligence", "suitable profiles", "selection"]
+      },
+      {
+        "title": "Quick Selection",
+        "description": "Digital tools to manage interviews and assessments efficiently, accelerating the hiring process.",
+        "keywords": ["digital tools", "interviews", "assessments"]
+      },
+      {
+        "title": "Skills Verification",
+        "description": "Objective assessment of candidates' skills through tests and certified references.",
+        "keywords": ["objective assessment", "tests", "certified references"]
+      }
+    ],
+    "next": "CONTINUE"
+  },
+  "companies2": {
+    "title": "What We Offer to Companies",
+    "subtitle": "Innovative solutions for personnel management",
+    "steps": [
+      {
+        "title": "Onboarding and Training",
+        "description": "Onboarding and training programs to quickly integrate new hires and promote their professional growth.",
+        "keywords": ["onboarding programs", "training", "professional growth"]
+      },
+      {
+        "title": "Performance Monitoring",
+        "description": "Digital tools to evaluate and develop staff skills, improving company productivity.",
+        "keywords": ["digital tools", "skills", "productivity"]
+      },
+      {
+        "title": "Document Verification",
+        "description": "Control and validation of candidate documents to ensure compliance and security in hiring.",
+        "keywords": ["control", "validation", "compliance"]
+      },
+      {
+        "title": "Compliance and Security",
+        "description": "Support in compliance with labor, immigration and data protection regulations, for a safe and compliant business environment.",
+        "keywords": ["regulations", "immigration", "data protection"]
+      }
+    ],
+    "next": "WHAT WE OFFER TO WORKERS"
+  },
+  "workers": {
+    "title": "How It Works for Workers",
+    "subtitle": "Tools and support for your professional success",
+    "steps": [
+      {
+        "title": "Certified Profile",
+        "description": "Complete and verified digital profile that certifies your skills, experiences and qualifications, facilitating the match with companies.",
+        "keywords": ["digital profile", "skills", "qualifications"]
+      },
+      {
+        "title": "Skills Validation",
+        "description": "Practical tests and professional assessments to ensure your skills are recognized and usable in the job market.",
+        "keywords": ["practical tests", "professional assessments", "skills"]
+      },
+      {
+        "title": "Digital Portfolio",
+        "description": "Digital space to showcase projects, certifications and references in a professional and easily shareable way.",
+        "keywords": ["projects", "certifications", "references"]
+      },
+      {
+        "title": "Intelligent Matching",
+        "description": "Artificial Intelligence analyzes your profile and connects you with opportunities best suited to your skills and aspirations.",
+        "keywords": ["Artificial Intelligence", "opportunities", "skills"]
+      }
+    ],
+    "next": "CONTINUE"
+  },
+  "workers2": {
+    "title": "How It Works for Workers",
+    "subtitle": "Tools and support for your professional success",
+    "steps": [
+      {
+        "title": "Interview Preparation",
+        "description": "Interview simulations and personalized feedback to help you present yourself best to companies.",
+        "keywords": ["simulations", "feedback", "interviews"]
+      },
+      {
+        "title": "Multilingual Support",
+        "description": "Assistance in preparing CVs and cover letters in different languages, to increase your international opportunities.",
+        "keywords": ["CV", "cover letters", "languages"]
+      },
+      {
+        "title": "Document Management",
+        "description": "Complete support for visas, work permits and all documentation needed to work abroad.",
+        "keywords": ["visas", "work permits", "documentation"]
+      },
+      {
+        "title": "Cultural Integration",
+        "description": "Language courses and training on local culture of the destination country to promote rapid integration.",
+        "keywords": ["language courses", "local culture", "integration"]
+      },
+      {
+        "title": "Relocation Logistics",
+        "description": "Assistance in finding accommodation and support for relocation, to make your work journey abroad simple and secure.",
+        "keywords": ["accommodation", "relocation", "support"]
+      }
+    ],
+    "next": "DIFFERENCES"
+  },
+  "differences": {
+    "title": "Differences From What Exists",
+    "subtitle": "How our solution stands out from existing alternatives",
+    "initiatives": {
+      "linkedin": {
+        "title": "LinkedIn + Learning",
+        "description": "Professional platform and online training",
+        "missing": [
+          "No relocation support",
+          "No microcredit system",
+          "No practical certification"
+        ]
+      },
+      "ngo": {
+        "title": "NGO Refugee Work",
+        "description": "Support for refugees in job search",
+        "missing": [
+          "Not scalable",
+          "No standardized certification",
+          "Limited resources"
+        ]
+      },
+      "portals": {
+        "title": "Migrant Job Portals",
+        "description": "Job matching platforms for migrants",
+        "missing": [
+          "No certified competence center",
+          "No post-hiring support",
+          "No quality guarantee"
+        ]
+      },
+      "microcredit": {
+        "title": "Microcredit Projects",
+        "description": "Financing initiatives for migrants",
+        "missing": [
+          "Only financial, not integrated",
+          "No training support",
+          "No employment guarantee"
+        ]
+      }
+    },
+    "solution": {
+      "title": "Our Solution",
+      "description": "A complete integration of all these services in a single platform, ensuring a safe and sustainable path from training to employment."
+    }
+  },
+  "bulgaria": {
+    "title": "A European Project Starting from Bulgaria",
+    "subtitle": "Bulgaria's strategic position in digital transformation",
+    "steps": [
+      {
+        "title": "Bulgaria's Transformation",
+        "description": "Bulgaria is at a crucial moment of positive transformation: it has taken a decisive path towards digitalization, distinguishing itself for administrative agility and openness to innovation, especially in the public and technological sector.",
+        "keywords": ["digitalization", "innovation", "transformation"]
+      },
+      {
+        "title": "How to Start",
+        "description": "We propose the launch in Bulgaria of an advanced digital ecosystem for matching job supply and demand, integrating technology, social impact and public-private cooperation.",
+        "keywords": ["digital ecosystem", "social impact", "cooperation"]
+      },
+      {
+        "title": "The Crucial Role of Institutions",
+        "description": "The project has significant social and ethical implications, addressing issues of inclusion, safe labor mobility and professional dignity. Active participation of governments and local institutions is fundamental to ensure its legitimacy, fairness and sustainability over time.",
+        "keywords": ["institutions", "inclusion", "sustainability"]
+      }
+    ],
+    "next": "STRATEGIC LEVERS"
+  },
+  "levers": {
+    "title": "The 5 Strategic Levers",
+    "subtitle": "Key elements for project success",
+    "steps": [
+      {
+        "title": "Pilot Project",
+        "description": "Launch in a selected region of Bulgaria as a national and European demonstration model.",
+        "keywords": ["pilot", "demonstration", "model"]
+      },
+      {
+        "title": "Experimentation Laboratory",
+        "description": "Creation of an operational laboratory to test digital and organizational solutions that can become a replicable prototype in other EU countries.",
+        "keywords": ["laboratory", "solutions", "prototype"]
+      },
+      {
+        "title": "Training Hub",
+        "description": "Construction of a center of excellence for training and certification (competence centers). Collaborations with companies and schools can be initiated.",
+        "keywords": ["training", "certification", "excellence"]
+      },
+      {
+        "title": "Public-Private Collaboration",
+        "description": "Activation of synergies between European funds, institutions, social stakeholders and industrial partners.",
+        "keywords": ["synergies", "stakeholders", "partners"]
+      },
+      {
+        "title": "International Branding",
+        "description": "Positioning Bulgaria as a European leading node for innovation in work and professional mobility.",
+        "keywords": ["branding", "innovation", "mobility"]
+      }
+    ],
+    "next": "OPERATIONAL PHASES"
+  },
+  "phases": {
+    "title": "Operational Phases",
+    "subtitle": "Step by step implementation",
+    "steps": [
+      {
+        "title": "Pilot Region Selection",
+        "description": "Careful selection of the initial region based on specific criteria and local support.",
+        "keywords": ["selection", "criteria", "support"]
+      },
+      {
+        "title": "Framework Definition",
+        "description": "Definition of a legal, organizational and technological framework.",
+        "keywords": ["legal", "organizational", "technological"]
+      },
+      {
+        "title": "Launch of Core Components",
+        "description": "Start of the experimental laboratory and training hub.",
+        "keywords": ["laboratory", "training", "hub"]
+      },
+      {
+        "title": "Microcredit Program",
+        "description": "Launch of the microcredit program for workers and SMEs.",
+        "keywords": ["microcredit", "workers", "SMEs"]
+      },
+      {
+        "title": "Impact and Expansion",
+        "description": "Impact assessment and plan for European extension.",
+        "keywords": ["assessment", "expansion", "European"]
+      }
+    ],
+    "next": "DIFFERENCES"
+  }
+}

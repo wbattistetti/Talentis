@@ -1,0 +1,314 @@
+{
+  "home": {
+    "title": "Home"
+  },
+  "splash": {
+    "title": "AI Jobs",
+    "subtitle": "Rivoluzionare la ricerca di lavoro con l'Intelligenza Artificiale",
+    "vision": "LA NOSTRA VISIONE"
+  },
+  "vision": {
+    "title": "La Nostra Visione",
+    "subtitle": "Vogliamo rivoluzionare il modo di trovare lavoro grazie all'Intelligenza Artificiale",
+    "steps": [
+      {
+        "title": "La Sfida del Cambiamento",
+        "description": "L'avvento dell'Intelligenza Artificiale sta inducendo una trasformazione del mercato del lavoro con una rapidità senza precedenti.",
+        "keywords": ["Intelligenza Artificiale", "trasformazione del mercato del lavoro", "senza precedenti"]
+      },
+      {
+        "title": "L'Importanza Sociale",
+        "description": "In un contesto di flussi migratori sempre più massicci, questa è diventata una questione etica, sociale e politica di primaria importanza.",
+        "keywords": ["questione etica", "sociale", "politica"]
+      },
+      {
+        "title": "Un Nuovo Formidabile Strumento",
+        "description": "Occorre l'IA per governare questo cambiamento e portare il mondo del reclutamento all'altezza delle nuove sfide.",
+        "keywords": ["IA per governare", "il mondo del reclutamento"]
+      },
+      {
+        "title": "La Soluzione che Proponiamo",
+        "description": "Un ecosistema per governare l'incrocio di domanda e offerta molto più efficace dei classici portali e in grado di coprire 'end-to-end' le esigenze delle aziende e dei lavoratori.",
+        "keywords": ["ecosistema", "domanda e offerta", "end-to-end"]
+      }
+    ],
+    "next": "PROBLEMI"
+  },
+  "problems": {
+    "title": "I Problemi",
+    "subtitle": "Le sfide che dobbiamo affrontare nel mercato del lavoro europeo",
+    "steps": [
+      {
+        "title": "Carenza di Manodopera",
+        "description": "Carenza di manodopera in settori strategici europei (sanità, edilizia, IT).",
+        "keywords": ["settori strategici", "sanità", "edilizia", "IT"]
+      },
+      {
+        "title": "Mismatch Formativo",
+        "description": "Mismatch tra formazione e fabbisogni del mercato del lavoro.",
+        "keywords": ["mismatch", "formazione", "fabbisogni"]
+      },
+      {
+        "title": "Flussi Migratori",
+        "description": "380.000 attraversamenti irregolari registrati in UE nel 2023.",
+        "keywords": ["attraversamenti irregolari", "UE", "2023"]
+      },
+      {
+        "title": "Gestione Frontiere",
+        "description": "Difficoltà nella gestione e identificazione dei migranti alle frontiere.",
+        "keywords": ["gestione", "identificazione", "frontiere"]
+      },
+      {
+        "title": "Politiche Integrate",
+        "description": "Necessità di politiche europee integrate su lavoro, formazione e migrazione.",
+        "keywords": ["politiche europee", "integrate", "formazione"]
+      }
+    ],
+    "next": "COSA OFFRIAMO"
+  },
+  "companies": {
+    "title": "Cosa Offriamo alle Aziende",
+    "subtitle": "Soluzioni innovative per la gestione del personale",
+    "steps": [
+      {
+        "title": "Accesso a Talenti Verificati",
+        "description": "Database di professionisti qualificati e certificati, pronti per essere inseriti rapidamente in azienda.",
+        "keywords": ["professionisti qualificati", "certificati", "database"]
+      },
+      {
+        "title": "Matching di Precisione",
+        "description": "L'Intelligenza Artificiale analizza le esigenze aziendali e trova i profili più adatti, riducendo tempi e costi di selezione.",
+        "keywords": ["Intelligenza Artificiale", "profili adatti", "selezione"]
+      },
+      {
+        "title": "Selezione Rapida",
+        "description": "Strumenti digitali per gestire colloqui e valutazioni in modo efficiente, accelerando il processo di assunzione.",
+        "keywords": ["strumenti digitali", "colloqui", "valutazioni"]
+      },
+      {
+        "title": "Verifica Competenze",
+        "description": "Valutazione oggettiva delle competenze dei candidati tramite test e referenze certificate.",
+        "keywords": ["valutazione oggettiva", "test", "referenze certificate"]
+      }
+    ],
+    "next": "CONTINUA"
+  },
+  "companies2": {
+    "title": "Cosa Offriamo alle Aziende",
+    "subtitle": "Soluzioni innovative per la gestione del personale",
+    "steps": [
+      {
+        "title": "Onboarding e Formazione",
+        "description": "Programmi di onboarding e formazione per integrare rapidamente i nuovi assunti e favorirne la crescita professionale.",
+        "keywords": ["programmi di onboarding", "formazione", "crescita professionale"]
+      },
+      {
+        "title": "Monitoraggio Performance",
+        "description": "Strumenti digitali per valutare e sviluppare le competenze del personale, migliorando la produttività aziendale.",
+        "keywords": ["strumenti digitali", "competenze", "produttività"]
+      },
+      {
+        "title": "Verifica Documentale",
+        "description": "Controllo e validazione dei documenti dei candidati per garantire la conformità e la sicurezza delle assunzioni.",
+        "keywords": ["controllo", "validazione", "conformità"]
+      },
+      {
+        "title": "Conformità e Sicurezza",
+        "description": "Supporto nel rispetto delle normative sul lavoro, immigrazione e protezione dei dati, per un ambiente aziendale sicuro e conforme.",
+        "keywords": ["normative", "immigrazione", "protezione dei dati"]
+      }
+    ],
+    "next": "COSA OFFRIAMO AI LAVORATORI"
+  },
+  "workers": {
+    "title": "Come Funziona per il Lavoratore",
+    "subtitle": "Strumenti e supporto per il tuo successo professionale",
+    "steps": [
+      {
+        "title": "Profilo Certificato",
+        "description": "Profilo digitale completo e verificato che attesta le tue competenze, esperienze e qualifiche, facilitando l'incontro con le aziende.",
+        "keywords": ["profilo digitale", "competenze", "qualifiche"]
+      },
+      {
+        "title": "Validazione Competenze",
+        "description": "Test pratici e valutazioni professionali per garantire che le tue competenze siano riconosciute e spendibili nel mercato del lavoro.",
+        "keywords": ["test pratici", "valutazioni professionali", "competenze"]
+      },
+      {
+        "title": "Portfolio Digitale",
+        "description": "Spazio digitale per mostrare progetti, certificazioni e referenze in modo professionale e facilmente condivisibile.",
+        "keywords": ["progetti", "certificazioni", "referenze"]
+      },
+      {
+        "title": "Matching Intelligente",
+        "description": "L'Intelligenza Artificiale analizza il tuo profilo e ti connette con le opportunità più adatte alle tue competenze e aspirazioni.",
+        "keywords": ["Intelligenza Artificiale", "opportunità", "competenze"]
+      }
+    ],
+    "next": "CONTINUA"
+  },
+  "workers2": {
+    "title": "Come Funziona per il Lavoratore",
+    "subtitle": "Strumenti e supporto per il tuo successo professionale",
+    "steps": [
+      {
+        "title": "Preparazione Colloquio",
+        "description": "Simulazioni di colloqui e feedback personalizzati per aiutarti a presentarti al meglio alle aziende.",
+        "keywords": ["simulazioni", "feedback", "colloqui"]
+      },
+      {
+        "title": "Supporto Multilingue",
+        "description": "Assistenza nella preparazione di CV e lettere motivazionali in diverse lingue, per aumentare le tue opportunità internazionali.",
+        "keywords": ["CV", "lettere motivazionali", "lingue"]
+      },
+      {
+        "title": "Gestione Documenti",
+        "description": "Supporto completo per visti, permessi di lavoro e tutta la documentazione necessaria per lavorare all'estero.",
+        "keywords": ["visti", "permessi di lavoro", "documentazione"]
+      },
+      {
+        "title":  "Integrazione Culturale",
+        "description": "Corsi di lingua e formazione sulla cultura locale del paese di destinazione per favorire una rapida integrazione.",
+        "keywords": ["corsi di lingua", "cultura locale", "integrazione"]
+      },
+      {
+        "title": "Logistica Trasferimento",
+        "description": "Assistenza nella ricerca di alloggio e supporto per il trasferimento, per rendere il tuo percorso lavorativo all'estero semplice e sicuro.",
+        "keywords": ["alloggio", "trasferimento", "supporto"]
+      }
+    ],
+    "next": "DIFFERENZE"
+  },
+  "differences": {
+    "title": "Differenze Rispetto a Ciò che Esiste",
+    "subtitle": "Come la nostra soluzione si distingue dalle alternative esistenti",
+    "initiatives": {
+      "linkedin": {
+        "title": "LinkedIn + Learning",
+        "description": "Piattaforma professionale e formazione online",
+        "missing": [
+          "Nessun supporto al trasferimento",
+          "Nessun sistema di microcredito",
+          "Nessuna certificazione pratica"
+        ]
+      },
+      "ngo": {
+        "title": "ONG Lavoro Rifugiati",
+        "description": "Supporto a rifugiati nella ricerca di lavoro",
+        "missing": [
+          "Non scalabili",
+          "Nessuna certificazione standardizzata",
+          "Risorse limitate"
+        ]
+      },
+      "portals": {
+        "title": "Portali Migranti Lavoro",
+        "description": "Piattaforme di job matching per migranti",
+        "missing": [
+          "Nessun centro certificato di competenza",
+          "Nessun supporto post-assunzione",
+          "Nessuna garanzia di qualità"
+        ]
+      },
+      "microcredit": {
+        "title": "Progetti Microcredito",
+        "description": "Iniziative di finanziamento per migranti",
+        "missing": [
+          "Solo finanziari, non integrati",
+          "Nessun supporto formativo",
+          "Nessuna garanzia di impiego"
+        ]
+      }
+    },
+    "solution": {
+      "title": "La Nostra Soluzione",
+      "description": "Un'integrazione completa di tutti questi servizi in un'unica piattaforma, garantendo un percorso sicuro e sostenibile dalla formazione all'impiego."
+    }
+  },
+  "bulgaria": {
+    "title": "Un Progetto Europeo che Inizia dalla Bulgaria",
+    "subtitle": "La posizione strategica della Bulgaria nella trasformazione digitale",
+    "steps": [
+      {
+        "title": "La Trasformazione della Bulgaria",
+        "description": "La Bulgaria si trova oggi in un momento cruciale di trasformazione positiva: ha intrapreso un percorso deciso verso la digitalizzazione, distinguendosi per agilità amministrativa e apertura all'innovazione, soprattutto nel settore pubblico e tecnologico.",
+        "keywords": ["digitalizzazione", "innovazione", "trasformazione"]
+      },
+      {
+        "title": "Come Partire",
+        "description": "Proponiamo l'avvio in Bulgaria di un ecosistema digitale avanzato per l'incontro tra domanda e offerta di lavoro, che integra tecnologia, impatto sociale e cooperazione pubblico-privato.",
+        "keywords": ["ecosistema digitale", "impatto sociale", "cooperazione"]
+      },
+      {
+        "title": "Il Ruolo Cruciale delle Istituzioni",
+        "description": "Il progetto ha un respiro sociale ed etico rilevante, in quanto affronta i temi dell'inclusione, della mobilità lavorativa sicura e della dignità professionale. La partecipazione attiva dei governi e delle istituzioni locali è fondamentale per garantirne la legittimità, l'equità e la sostenibilità nel tempo.",
+        "keywords": ["istituzioni", "inclusione", "sostenibilità"]
+      }
+    ],
+    "next": "LEVE STRATEGICHE"
+  },
+  "levers": {
+    "title": "Le 5 Leve Strategiche",
+    "subtitle": "Elementi chiave per il successo del progetto",
+    "steps": [
+      {
+        "title": "Progetto Pilota",
+        "description": "Avvio in una regione selezionata della Bulgaria come modello dimostrativo nazionale ed europeo.",
+        "keywords": ["pilota", "dimostrazione", "modello"]
+      },
+      {
+        "title": "Laboratorio di Sperimentazione",
+        "description": "Creazione di un laboratorio operativo dove testare soluzioni digitali e organizzative che possano diventare prototipo replicabile in altri Paesi UE.",
+        "keywords": ["laboratorio", "soluzioni", "prototipo"]
+      },
+      {
+        "title": "Hub di Formazione",
+        "description": "Costruzione di un centro d'eccellenza per la formazione e la certificazione (i centri di competenza). Si possono avviare collaborazioni con imprese e scuole.",
+        "keywords": ["formazione", "certificazione", "eccellenza"]
+      },
+      {
+        "title": "Collaborazione Pubblico-Privato",
+        "description": "Attivazione di sinergie tra fondi europei, istituzioni, stakeholder sociali e partner industriali.",
+        "keywords": ["sinergie", "stakeholder", "partner"]
+      },
+      {
+        "title": "Branding Internazionale",
+        "description": "Posizionamento della Bulgaria come nodo guida europeo per l'innovazione nel lavoro e nella mobilità professionale.",
+        "keywords": ["branding", "innovazione", "mobilità"]
+      }
+    ],
+    "next": "FASI OPERATIVE"
+  },
+  "phases": {
+    "title": "Fasi Operative",
+    "subtitle": "Implementazione passo dopo passo",
+    "steps": [
+      {
+        "title": "Selezione della Regione Pilota",
+        "description": "Attenta selezione della regione iniziale basata su criteri specifici e supporto locale.",
+        "keywords": ["selezione", "criteri", "supporto"]
+      },
+      {
+        "title": "Definizione del Framework",
+        "description": "Definizione di un framework legale, organizzativo e tecnologico.",
+        "keywords": ["legale", "organizzativo", "tecnologico"]
+      },
+      {
+        "title": "Avvio Componenti Core",
+        "description": "Avvio del laboratorio sperimentale e dell'hub formativo.",
+        "keywords": ["laboratorio", "formazione", "hub"]
+      },
+      {
+        "title": "Programma Microcredito",
+        "description": "Lancio del programma di microcredito per lavoratori e PMI.",
+        "keywords": ["microcredito", "lavoratori", "PMI"]
+      },
+      {
+        "title": "Impatto ed Espansione",
+        "description": "Valutazione d'impatto e piano per l'estensione europea.",
+        "keywords": ["valutazione", "espansione", "europea"]
+      }
+    ],
+    "next": "DIFFERENZE"
+  }
+}
